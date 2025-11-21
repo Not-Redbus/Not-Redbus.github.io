@@ -8,19 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
-        
-        /* Remove default triangle from details tag */
         details > summary { list-style: none; cursor: pointer; }
         details > summary::-webkit-details-marker { display: none; }
-        
-        /* The Plus/Minus toggle logic */
         details .icon:before { content: "[+]"; }
-        details[open] .icon:before { content: "[-]"; color: #ef4444; } /* Turns red when open */
-
-        /* Hover effect for the list item */
+        details[open] .icon:before { content: "[-]"; color: #ef4444; }
         summary:hover { background-color: #1a1a1a; color: #fff; }
-
         textarea { resize: none; outline: none; }
+        
+        /* Spec Sheet Styling */
+        .spec-label { color: #52525b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 4px; display: block; }
+        .spec-text { color: #a1a1aa; font-size: 12px; line-height: 1.6; margin-bottom: 12px; }
     </style>
 </head>
 <body class="min-h-screen p-6 sm:p-12 max-w-4xl mx-auto">
@@ -28,7 +25,6 @@
     <div class="mb-8 border-b border-zinc-800 pb-4">
         <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
         <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\PROJECTS\</h1>
-        <p class="text-xs text-zinc-500 mt-1">2 FILES FOUND. CLICK TO EXECUTE.</p>
     </div>
 
     <div class="space-y-2">
@@ -37,20 +33,52 @@
             <summary class="flex items-center py-2 select-none transition-colors">
                 <span class="icon mr-4 font-bold"></span>
                 <span class="text-sm sm:text-base">01_json_schema_validator.exe</span>
-                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Date: 2025-11-20 | Size: 14KB</span>
+                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Status: PROD | V.1.2</span>
             </summary>
             
-            <div class="pl-10 pt-4 pb-8">
-                <p class="text-xs text-zinc-500 mb-4">// MISSION: Parse incoming payloads for null values.</p>
+            <div class="pl-10 pt-4 pb-8 grid lg:grid-cols-2 gap-12">
                 
-                <div class="max-w-xl">
-                    <div class="bg-zinc-900 p-1 border border-zinc-800">
-                        <textarea id="jsonInput" class="w-full h-24 bg-black text-green-500 p-2 text-xs focus:bg-zinc-900 transition-colors" placeholder='INPUT: { "current_temp": 20 }'></textarea>
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="spec-label text-orange-500">>> EXECUTABLE</span>
                     </div>
-                    <button onclick="validateJson()" class="mt-2 text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-1 border border-zinc-700 transition-colors">
-                        > RUN SCRIPT
+                    <div class="bg-zinc-900 p-1 border border-zinc-800">
+                        <textarea id="jsonInput" class="w-full h-32 bg-black text-green-500 p-2 text-xs focus:bg-zinc-900 transition-colors" placeholder='INPUT: { "current_temp": 20 }'></textarea>
+                    </div>
+                    <button onclick="validateJson()" class="mt-2 text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-2 border border-zinc-700 transition-colors w-full font-bold">
+                        > RUN VALIDATION SCRIPT
                     </button>
-                    <div id="validationResult" class="mt-2 text-xs font-bold h-4"></div>
+                    <div id="validationResult" class="mt-2 text-xs font-bold h-6 border-b border-zinc-800 flex items-center"></div>
+                </div>
+
+                <div class="border-l border-zinc-800 pl-6 opacity-80 hover:opacity-100 transition-opacity">
+                    <span class="spec-label text-zinc-400 mb-4 border-b border-zinc-800 pb-1 block">>> PM_DOCUMENTATION (PRD)</span>
+                    
+                    <div class="mb-4">
+                        <span class="spec-label">01. Problem Statement</span>
+                        <p class="spec-text">
+                            Downstream logistics systems were crashing because IoT devices sent null values during connectivity dips. We needed a gateway middleware to reject malformed payloads before they hit the database.
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="spec-label">02. Acceptance Criteria (Gherkin)</span>
+                        <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 font-mono leading-relaxed">
+                            <span class="text-purple-400">GIVEN</span> an incoming Shipment_Event payload<br>
+                            <span class="text-purple-400">WHEN</span> the field "current_temp" is missing OR null<br>
+                            <span class="text-purple-400">THEN</span> reject request with 400 Bad Request<br>
+                            <span class="text-purple-400">AND</span> log the "device_id" for maintenance review.
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="spec-label">03. Technical Constraints</span>
+                        <ul class="list-disc list-inside spec-text ml-1">
+                            <li>Latency must remain under 50ms per validation.</li>
+                            <li>Must support JSON Schema Draft-07.</li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </details>
@@ -59,71 +87,10 @@
             <summary class="flex items-center py-2 select-none transition-colors">
                 <span class="icon mr-4 font-bold"></span>
                 <span class="text-sm sm:text-base">02_latency_simulator.py</span>
-                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Date: 2025-11-21 | Size: 22KB</span>
             </summary>
-            
             <div class="pl-10 pt-4 pb-8">
-                <p class="text-xs text-zinc-500 mb-4">// MISSION: Visualize exponential backoff strategy.</p>
-                
-                <div class="max-w-xl">
-                    <div class="flex gap-4">
-                        <button id="simBtn" onclick="runSimulation()" class="text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-2 border border-zinc-700 transition-colors">
-                            > TRIGGER 500 ERROR
-                        </button>
-                        <div id="consoleLog" class="flex-grow h-24 bg-zinc-900 border border-zinc-800 p-2 text-[10px] text-zinc-400 overflow-y-auto font-mono">
-                            > System ready...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </details>
-
-        <div class="flex items-center py-2 text-zinc-700 cursor-not-allowed opacity-50">
-            <span class="mr-4">[?]</span>
-            <span class="text-sm">03_coming_soon...</span>
-        </div>
-
-    </div>
-
-    <div class="mt-12 pt-4 border-t border-zinc-900 text-[10px] text-zinc-700">
-        _
-    </div>
-
-    <script>
-        // VALIDATOR
-        function validateJson() {
-            const input = document.getElementById('jsonInput').value;
-            const res = document.getElementById('validationResult');
-            try {
-                if (!input.trim()) throw new Error("NULL INPUT");
-                const data = JSON.parse(input);
-                if (!data.hasOwnProperty('current_temp')) throw new Error("MISSING: current_temp");
-                if (typeof data.current_temp !== 'number') throw new Error("TYPE ERR: current_temp");
-                res.innerHTML = "<span class='text-green-500'>OK: 200</span>";
-            } catch (e) {
-                res.innerHTML = `<span class='text-red-500'>ERR: ${e.message}</span>`;
-            }
-        }
-
-        // SIMULATOR
-        function runSimulation() {
-            const log = document.getElementById('consoleLog');
-            const btn = document.getElementById('simBtn');
-            log.innerHTML = ""; btn.disabled = true;
-            const w = (t, c) => { log.innerHTML += `<div class="${c}">${t}</div>`; log.scrollTop = log.scrollHeight; };
-            
-            w("Connect...", "text-zinc-300");
-            setTimeout(() => {
-                w("ERR 500", "text-red-500"); w("Wait 1s...", "text-zinc-500");
-                setTimeout(() => {
-                    w("Retry...", "text-zinc-300"); w("ERR 500", "text-red-500"); w("Wait 2s...", "text-zinc-500");
-                    setTimeout(() => {
-                        w("Retry...", "text-zinc-300"); 
-                        setTimeout(() => { w("OK 200", "text-green-500"); btn.disabled = false; }, 500);
-                    }, 2000);
-                }, 1000);
-            }, 500);
-        }
-    </script>
-</body>
-</html>
+                <p class="text-xs text-zinc-500 mb-4">// TODO: Upload PRD for Backoff Logic...</p>
+                <div class="flex gap-4">
+                    <button id="simBtn" onclick="runSimulation()" class="text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-2 border border-zinc-700 transition-colors">
+                        > TRIGGER 500 ERROR
+                    </button>
