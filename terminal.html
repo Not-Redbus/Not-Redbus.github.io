@@ -3,96 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANDREW | TERMINAL</title>
+    <title>ANDREW | DIRECTORY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #111; color: #eee; font-family: 'Inter', sans-serif; }
-        .mono { font-family: 'Roboto Mono', monospace; }
-        .bloomberg-orange { color: #f59e0b; }
+        body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
+        
+        /* Remove default triangle from details tag */
+        details > summary { list-style: none; cursor: pointer; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        /* The Plus/Minus toggle logic */
+        details .icon:before { content: "[+]"; }
+        details[open] .icon:before { content: "[-]"; color: #ef4444; } /* Turns red when open */
+
+        /* Hover effect for the list item */
+        summary:hover { background-color: #1a1a1a; color: #fff; }
+
         textarea { resize: none; outline: none; }
-        /* Custom Scrollbar for the 'Terminal' look */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #222; }
-        ::-webkit-scrollbar-thumb { background: #f59e0b; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen p-6 sm:p-12 max-w-4xl mx-auto">
 
-    <nav class="bg-zinc-900 border-b border-zinc-800 p-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <a href="index.html" class="text-xs font-bold text-zinc-500 hover:text-white uppercase tracking-widest transition-colors">
-                &larr; Return to Profile
-            </a>
-            <div class="h-4 w-px bg-zinc-700"></div>
-            <span class="text-sm font-black text-white tracking-tighter uppercase">Technical_Directory</span>
-        </div>
-        <div class="mono text-[10px] bloomberg-orange">
-            STATUS: ONLINE
-        </div>
-    </nav>
+    <div class="mb-8 border-b border-zinc-800 pb-4">
+        <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
+        <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\PROJECTS\</h1>
+        <p class="text-xs text-zinc-500 mt-1">2 FILES FOUND. CLICK TO EXECUTE.</p>
+    </div>
 
-    <main class="flex-grow p-4 sm:p-8 max-w-5xl mx-auto w-full grid gap-8">
+    <div class="space-y-2">
 
-        <div class="border-l-2 border-orange-500 pl-4">
-            <h1 class="text-2xl font-bold text-white mb-1">Live Prototype Environment</h1>
-            <p class="text-sm text-zinc-400">Select a module below to execute technical validation scripts.</p>
-        </div>
-
-        <section class="bg-zinc-900 border border-zinc-800 p-1 rounded">
-            <div class="bg-black px-4 py-2 flex justify-between items-center border-b border-zinc-800">
-                <span class="mono text-xs font-bold bloomberg-orange uppercase">>> MOD_01: JSON_SCHEMA_CHECK</span>
-                <span class="text-[10px] text-zinc-600 uppercase">API_Tools</span>
-            </div>
+        <details class="group border-b border-zinc-900 pb-2">
+            <summary class="flex items-center py-2 select-none transition-colors">
+                <span class="icon mr-4 font-bold"></span>
+                <span class="text-sm sm:text-base">01_json_schema_validator.exe</span>
+                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Date: 2025-11-20 | Size: 14KB</span>
+            </summary>
             
-            <div class="p-6 grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-[10px] text-zinc-500 uppercase font-bold mb-2">Input Payload</label>
-                    <textarea id="jsonInput" class="w-full h-32 bg-black border border-zinc-700 text-green-400 p-3 text-xs mono rounded focus:border-orange-500" placeholder='{ "current_temp": 45.2 }'></textarea>
-                </div>
-                <div class="flex flex-col justify-between">
-                    <div>
-                        <label class="block text-[10px] text-zinc-500 uppercase font-bold mb-2">Validation Rules</label>
-                        <ul class="text-xs text-zinc-400 mono space-y-1 border border-zinc-800 p-2 rounded bg-black/50">
-                            <li>[x] Format: JSON</li>
-                            <li>[ ] Field: "current_temp"</li>
-                            <li>[ ] Type: Number</li>
-                        </ul>
+            <div class="pl-10 pt-4 pb-8">
+                <p class="text-xs text-zinc-500 mb-4">// MISSION: Parse incoming payloads for null values.</p>
+                
+                <div class="max-w-xl">
+                    <div class="bg-zinc-900 p-1 border border-zinc-800">
+                        <textarea id="jsonInput" class="w-full h-24 bg-black text-green-500 p-2 text-xs focus:bg-zinc-900 transition-colors" placeholder='INPUT: { "current_temp": 20 }'></textarea>
                     </div>
-                    <div>
-                        <button onclick="validateJson()" class="w-full bg-orange-600 hover:bg-orange-500 text-black font-bold py-2 text-xs uppercase tracking-widest rounded transition-colors mt-4">
-                            Run Validation Script
-                        </button>
-                        <div id="validationResult" class="mt-2 h-8 flex items-center text-xs mono font-bold"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-zinc-900 border border-zinc-800 p-1 rounded">
-            <div class="bg-black px-4 py-2 flex justify-between items-center border-b border-zinc-800">
-                <span class="mono text-xs font-bold bloomberg-orange uppercase">>> MOD_02: LATENCY_SIMULATOR</span>
-                <span class="text-[10px] text-zinc-600 uppercase">System_Ops</span>
-            </div>
-
-            <div class="p-6">
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button id="simBtn" onclick="runSimulation()" class="sm:w-48 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-white p-4 font-bold text-xs uppercase tracking-widest rounded flex flex-col items-center justify-center gap-2 transition-all">
-                        <span class="text-2xl text-orange-500">⚡</span>
-                        Simulate<br>500 Error
+                    <button onclick="validateJson()" class="mt-2 text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-1 border border-zinc-700 transition-colors">
+                        > RUN SCRIPT
                     </button>
-                    
-                    <div class="flex-grow bg-black border border-zinc-700 rounded p-3 h-32 overflow-y-auto relative">
-                        <div class="absolute top-0 right-0 bg-zinc-800 text-zinc-500 text-[10px] px-2 py-1 rounded-bl">SYS_LOG</div>
-                        <div id="consoleLog" class="mono text-xs space-y-1">
-                            <span class="text-zinc-600">> Waiting for trigger event...</span>
+                    <div id="validationResult" class="mt-2 text-xs font-bold h-4"></div>
+                </div>
+            </div>
+        </details>
+
+        <details class="group border-b border-zinc-900 pb-2">
+            <summary class="flex items-center py-2 select-none transition-colors">
+                <span class="icon mr-4 font-bold"></span>
+                <span class="text-sm sm:text-base">02_latency_simulator.py</span>
+                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Date: 2025-11-21 | Size: 22KB</span>
+            </summary>
+            
+            <div class="pl-10 pt-4 pb-8">
+                <p class="text-xs text-zinc-500 mb-4">// MISSION: Visualize exponential backoff strategy.</p>
+                
+                <div class="max-w-xl">
+                    <div class="flex gap-4">
+                        <button id="simBtn" onclick="runSimulation()" class="text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-2 border border-zinc-700 transition-colors">
+                            > TRIGGER 500 ERROR
+                        </button>
+                        <div id="consoleLog" class="flex-grow h-24 bg-zinc-900 border border-zinc-800 p-2 text-[10px] text-zinc-400 overflow-y-auto font-mono">
+                            > System ready...
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </details>
 
-    </main>
+        <div class="flex items-center py-2 text-zinc-700 cursor-not-allowed opacity-50">
+            <span class="mr-4">[?]</span>
+            <span class="text-sm">03_coming_soon...</span>
+        </div>
+
+    </div>
+
+    <div class="mt-12 pt-4 border-t border-zinc-900 text-[10px] text-zinc-700">
+        _
+    </div>
 
     <script>
         // VALIDATOR
@@ -100,14 +95,13 @@
             const input = document.getElementById('jsonInput').value;
             const res = document.getElementById('validationResult');
             try {
-                if (!input.trim()) throw new Error("NO DATA INPUT");
+                if (!input.trim()) throw new Error("NULL INPUT");
                 const data = JSON.parse(input);
-                if (!data.hasOwnProperty('current_temp')) throw new Error("MISSING FIELD: 'current_temp'");
-                if (typeof data.current_temp !== 'number') throw new Error("TYPE ERROR: 'current_temp' MUST BE INT/FLOAT");
-
-                res.innerHTML = "<span class='text-green-500'>[SUCCESS] 200 OK: Payload Validated</span>";
+                if (!data.hasOwnProperty('current_temp')) throw new Error("MISSING: current_temp");
+                if (typeof data.current_temp !== 'number') throw new Error("TYPE ERR: current_temp");
+                res.innerHTML = "<span class='text-green-500'>OK: 200</span>";
             } catch (e) {
-                res.innerHTML = `<span class='text-red-500'>[FAIL] ${e.message}</span>`;
+                res.innerHTML = `<span class='text-red-500'>ERR: ${e.message}</span>`;
             }
         }
 
@@ -115,42 +109,20 @@
         function runSimulation() {
             const log = document.getElementById('consoleLog');
             const btn = document.getElementById('simBtn');
+            log.innerHTML = ""; btn.disabled = true;
+            const w = (t, c) => { log.innerHTML += `<div class="${c}">${t}</div>`; log.scrollTop = log.scrollHeight; };
             
-            log.innerHTML = "";
-            btn.disabled = true;
-            btn.classList.add('opacity-50');
-
-            const print = (txt, color="text-zinc-400") => {
-                const time = new Date().toISOString().split('T')[1].split('.')[0];
-                log.innerHTML += `<div class='${color}'>[${time}] ${txt}</div>`;
-                log.scrollTop = log.scrollHeight;
-            };
-
-            print("Initializing request sequence...", "text-orange-400");
-            
+            w("Connect...", "text-zinc-300");
             setTimeout(() => {
-                print("Error: 500 Internal Server Error", "text-red-500");
-                print("Strategy: Backoff 1000ms");
-                
+                w("ERR 500", "text-red-500"); w("Wait 1s...", "text-zinc-500");
                 setTimeout(() => {
-                    print("Retry Attempt 01...", "text-orange-400");
-                    
+                    w("Retry...", "text-zinc-300"); w("ERR 500", "text-red-500"); w("Wait 2s...", "text-zinc-500");
                     setTimeout(() => {
-                        print("Error: 500 Internal Server Error", "text-red-500");
-                        print("Strategy: Backoff 2000ms (Exponential)");
-
-                        setTimeout(() => {
-                            print("Retry Attempt 02...", "text-orange-400");
-                            
-                            setTimeout(() => {
-                                print("Success: 200 OK - Data Ingested", "text-green-500 font-bold");
-                                btn.disabled = false;
-                                btn.classList.remove('opacity-50');
-                            }, 800);
-                        }, 2000);
-                    }, 800);
+                        w("Retry...", "text-zinc-300"); 
+                        setTimeout(() => { w("OK 200", "text-green-500"); btn.disabled = false; }, 500);
+                    }, 2000);
                 }, 1000);
-            }, 800);
+            }, 500);
         }
     </script>
 </body>
