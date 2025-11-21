@@ -1,1 +1,186 @@
-<h1>Work in Progress</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANDREW_PM // TERMINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'JetBrains Mono', monospace; background-color: #000; color: #f59e0b; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        /* Scrollbar styling for terminal feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; }
+        textarea { resize: none; outline: none; }
+        button:active { transform: translateY(2px); }
+    </style>
+</head>
+<body class="min-h-screen p-2 sm:p-6 text-xs sm:text-sm uppercase leading-relaxed selection:bg-amber-900 selection:text-white">
+
+    <div class="max-w-4xl mx-auto border-2 border-amber-600 p-1 bg-black shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+        
+        <div class="flex justify-between items-center bg-amber-600 text-black px-2 py-1 font-bold mb-4">
+            <span>ANDREW_PM [User: ADMIN]</span>
+            <span>SYS_STATUS: ONLINE <span class="blink">█</span></span>
+        </div>
+
+        <header class="mb-8 px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-amber-800 pb-6">
+                <div class="md:col-span-3">
+                    <h1 class="text-3xl font-bold mb-2 tracking-tighter">ANDREW <span class="text-amber-300">[LASTNAME]</span></h1>
+                    <p class="text-amber-700 text-xs mb-4">/// ID: 998-22-1 /// LOC: US-EAST</p>
+                    <p class="text-amber-500 max-w-xl">
+                        >> OBJECTIVE: TRANSITION FROM CONSULTING TO TECHNICAL PRODUCT MANAGEMENT.<br>
+                        >> SPECIALTY: IOT DATA INGESTION, API RESILIENCE, SYSTEM ARCHITECTURE.<br>
+                        >> STATUS: BUILDING PROTOTYPES TO VALIDATE REQUIREMENTS.
+                    </p>
+                </div>
+                <div class="border border-amber-800 p-2 text-center flex flex-col justify-center bg-zinc-900">
+                    <span class="text-amber-700 block text-[10px]">MARKET_VAL</span>
+                    <span class="text-xl font-bold">HIRE_READY</span>
+                    <span class="text-green-500 text-xs">▲ +15.4%</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="px-4 pb-4 grid gap-8">
+
+            <section class="border border-amber-800 bg-zinc-900/30">
+                <div class="bg-amber-900/20 border-b border-amber-800 px-2 py-1 flex justify-between items-center">
+                    <span class="font-bold">>> MODULE_01: JSON_SCHEMA_VALIDATOR</span>
+                    <span class="text-[10px] text-amber-600">[API_CHK]</span>
+                </div>
+                
+                <div class="p-4 grid md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="mb-2 text-amber-700">INPUT_STREAM //</p>
+                        <textarea id="jsonInput" class="w-full h-32 bg-black border border-amber-700 text-amber-500 p-2 font-mono text-xs focus:border-amber-400" placeholder='{ "data_point": 100, "status": "active" }'></textarea>
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <div>
+                            <p class="mb-2 text-amber-700">LOGIC_GATES //</p>
+                            <ul class="list-none space-y-1 text-amber-600 text-[10px]">
+                                <li>[ ] CHECK_FORMAT: JSON</li>
+                                <li>[ ] CHECK_FIELD: "data_point"</li>
+                                <li>[ ] CHECK_TYPE: NUMBER</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="validateJson()" class="w-full bg-amber-700 text-black font-bold py-2 hover:bg-amber-500 transition-colors border border-amber-500">
+                                EXECUTE_VALIDATION()
+                            </button>
+                            <div id="validationResult" class="mt-2 h-10 flex items-center px-2 text-xs border border-transparent">
+                                <span class="text-amber-800">WAITING FOR INPUT...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="border border-amber-800 bg-zinc-900/30">
+                <div class="bg-amber-900/20 border-b border-amber-800 px-2 py-1 flex justify-between items-center">
+                    <span class="font-bold">>> MODULE_02: BACKOFF_SIMULATOR</span>
+                    <span class="text-[10px] text-amber-600">[LATENCY_TEST]</span>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex gap-4 mb-4 items-start">
+                         <button id="simBtn" onclick="runSimulation()" class="bg-black border border-amber-500 text-amber-500 hover:bg-amber-900 px-6 py-4 font-bold">
+                            INITIATE<br>FAILURE<br>SEQUENCE
+                        </button>
+                        <div class="flex-1">
+                            <p class="text-amber-700 mb-1">SYSTEM_LOG output //</p>
+                            <div id="consoleLog" class="bg-black border border-amber-700 h-32 overflow-y-auto p-2 font-mono text-xs space-y-1">
+                                <span class="text-amber-900">>> READY_STATE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="bg-amber-900/10 border-t border-amber-800 px-4 py-2 flex justify-between text-[10px] text-amber-800">
+            <span>COPYRIGHT © 2025 ANDREW_PM</span>
+            <span>MEM: 64KB OK</span>
+        </footer>
+
+    </div>
+
+    <script>
+        // UTILS
+        const timestamp = () => new Date().toISOString().split('T')[1].split('.')[0];
+
+        // MOD 1: VALIDATOR
+        function validateJson() {
+            const input = document.getElementById('jsonInput').value;
+            const res = document.getElementById('validationResult');
+            
+            try {
+                if (!input.trim()) throw new Error("NULL_INPUT");
+                const data = JSON.parse(input);
+                
+                if (!data.hasOwnProperty('data_point')) throw new Error("MISSING_KEY: 'data_point'");
+                if (typeof data.data_point !== 'number') throw new Error("TYPE_ERR: 'data_point' != INT");
+
+                // SUCCESS
+                res.className = "mt-2 h-10 flex items-center px-2 text-xs bg-amber-900/30 border border-amber-500 text-amber-400";
+                res.innerHTML = `[${timestamp()}] >> SUCCESS: 200_OK | PAYLOAD_VALID`;
+
+            } catch (e) {
+                // FAIL
+                res.className = "mt-2 h-10 flex items-center px-2 text-xs bg-red-900/30 border border-red-500 text-red-500";
+                res.innerHTML = `[${timestamp()}] >> FATAL: ${e.message}`;
+            }
+        }
+
+        // MOD 2: BACKOFF
+        function runSimulation() {
+            const log = document.getElementById('consoleLog');
+            const btn = document.getElementById('simBtn');
+            
+            log.innerHTML = ''; 
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            const write = (msg, style="text-amber-500") => {
+                log.innerHTML += `<div class="${style}">[${timestamp()}] ${msg}</div>`;
+                log.scrollTop = log.scrollHeight;
+            };
+
+            write("INIT_CONNECTION...", "text-amber-300");
+            
+            setTimeout(() => {
+                write("ERR_500: SERVER_UNREACHABLE", "text-red-500");
+                write(">> ACTION: BACKOFF (1000ms)", "text-amber-700");
+                
+                setTimeout(() => {
+                    write("RETRY_ATTEMPT_01...", "text-amber-300");
+                    
+                    setTimeout(() => {
+                        write("ERR_500: SERVER_UNREACHABLE", "text-red-500");
+                        write(">> ACTION: BACKOFF (2000ms)", "text-amber-700");
+
+                        setTimeout(() => {
+                            write("RETRY_ATTEMPT_02...", "text-amber-300");
+                            
+                            setTimeout(() => {
+                                write("SUCCESS: 200_OK | SYNC_COMPLETE", "text-green-500 bg-green-900/20");
+                                btn.disabled = false;
+                                btn.classList.remove('opacity-50');
+                            }, 800);
+
+                        }, 2000);
+
+                    }, 800);
+                    
+                }, 1000);
+
+            }, 800);
+        }
+    </script>
+</body>
+</html>
