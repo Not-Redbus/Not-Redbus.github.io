@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANDREW | TERMINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #111; color: #eee; font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'Roboto Mono', monospace; }
+        .bloomberg-orange { color: #f59e0b; }
+        textarea { resize: none; outline: none; }
+        /* Custom Scrollbar for the 'Terminal' look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #222; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="bg-zinc-900 border-b border-zinc-800 p-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="text-xs font-bold text-zinc-500 hover:text-white uppercase tracking-widest transition-colors">
+                &larr; Return to Profile
+            </a>
+            <div class="h-4 w-px bg-zinc-700"></div>
+            <span class="text-sm font-black text-white tracking-tighter uppercase">Technical_Directory</span>
+        </div>
+        <div class="mono text-[10px] bloomberg-orange">
+            STATUS: ONLINE
+        </div>
+    </nav>
+
+    <main class="flex-grow p-4 sm:p-8 max-w-5xl mx-auto w-full grid gap-8">
+
+        <div class="border-l-2 border-orange-500 pl-4">
+            <h1 class="text-2xl font-bold text-white mb-1">Live Prototype Environment</h1>
+            <p class="text-sm text-zinc-400">Select a module below to execute technical validation scripts.</p>
+        </div>
+
+        <section class="bg-zinc-900 border border-zinc-800 p-1 rounded">
+            <div class="bg-black px-4 py-2 flex justify-between items-center border-b border-zinc-800">
+                <span class="mono text-xs font-bold bloomberg-orange uppercase">>> MOD_01: JSON_SCHEMA_CHECK</span>
+                <span class="text-[10px] text-zinc-600 uppercase">API_Tools</span>
+            </div>
+            
+            <div class="p-6 grid md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase font-bold mb-2">Input Payload</label>
+                    <textarea id="jsonInput" class="w-full h-32 bg-black border border-zinc-700 text-green-400 p-3 text-xs mono rounded focus:border-orange-500" placeholder='{ "current_temp": 45.2 }'></textarea>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <label class="block text-[10px] text-zinc-500 uppercase font-bold mb-2">Validation Rules</label>
+                        <ul class="text-xs text-zinc-400 mono space-y-1 border border-zinc-800 p-2 rounded bg-black/50">
+                            <li>[x] Format: JSON</li>
+                            <li>[ ] Field: "current_temp"</li>
+                            <li>[ ] Type: Number</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <button onclick="validateJson()" class="w-full bg-orange-600 hover:bg-orange-500 text-black font-bold py-2 text-xs uppercase tracking-widest rounded transition-colors mt-4">
+                            Run Validation Script
+                        </button>
+                        <div id="validationResult" class="mt-2 h-8 flex items-center text-xs mono font-bold"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-zinc-900 border border-zinc-800 p-1 rounded">
+            <div class="bg-black px-4 py-2 flex justify-between items-center border-b border-zinc-800">
+                <span class="mono text-xs font-bold bloomberg-orange uppercase">>> MOD_02: LATENCY_SIMULATOR</span>
+                <span class="text-[10px] text-zinc-600 uppercase">System_Ops</span>
+            </div>
+
+            <div class="p-6">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="simBtn" onclick="runSimulation()" class="sm:w-48 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-white p-4 font-bold text-xs uppercase tracking-widest rounded flex flex-col items-center justify-center gap-2 transition-all">
+                        <span class="text-2xl text-orange-500">⚡</span>
+                        Simulate<br>500 Error
+                    </button>
+                    
+                    <div class="flex-grow bg-black border border-zinc-700 rounded p-3 h-32 overflow-y-auto relative">
+                        <div class="absolute top-0 right-0 bg-zinc-800 text-zinc-500 text-[10px] px-2 py-1 rounded-bl">SYS_LOG</div>
+                        <div id="consoleLog" class="mono text-xs space-y-1">
+                            <span class="text-zinc-600">> Waiting for trigger event...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // VALIDATOR
+        function validateJson() {
+            const input = document.getElementById('jsonInput').value;
+            const res = document.getElementById('validationResult');
+            try {
+                if (!input.trim()) throw new Error("NO DATA INPUT");
+                const data = JSON.parse(input);
+                if (!data.hasOwnProperty('current_temp')) throw new Error("MISSING FIELD: 'current_temp'");
+                if (typeof data.current_temp !== 'number') throw new Error("TYPE ERROR: 'current_temp' MUST BE INT/FLOAT");
+
+                res.innerHTML = "<span class='text-green-500'>[SUCCESS] 200 OK: Payload Validated</span>";
+            } catch (e) {
+                res.innerHTML = `<span class='text-red-500'>[FAIL] ${e.message}</span>`;
+            }
+        }
+
+        // SIMULATOR
+        function runSimulation() {
+            const log = document.getElementById('consoleLog');
+            const btn = document.getElementById('simBtn');
+            
+            log.innerHTML = "";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            const print = (txt, color="text-zinc-400") => {
+                const time = new Date().toISOString().split('T')[1].split('.')[0];
+                log.innerHTML += `<div class='${color}'>[${time}] ${txt}</div>`;
+                log.scrollTop = log.scrollHeight;
+            };
+
+            print("Initializing request sequence...", "text-orange-400");
+            
+            setTimeout(() => {
+                print("Error: 500 Internal Server Error", "text-red-500");
+                print("Strategy: Backoff 1000ms");
+                
+                setTimeout(() => {
+                    print("Retry Attempt 01...", "text-orange-400");
+                    
+                    setTimeout(() => {
+                        print("Error: 500 Internal Server Error", "text-red-500");
+                        print("Strategy: Backoff 2000ms (Exponential)");
+
+                        setTimeout(() => {
+                            print("Retry Attempt 02...", "text-orange-400");
+                            
+                            setTimeout(() => {
+                                print("Success: 200 OK - Data Ingested", "text-green-500 font-bold");
+                                btn.disabled = false;
+                                btn.classList.remove('opacity-50');
+                            }, 800);
+                        }, 2000);
+                    }, 800);
+                }, 1000);
+            }, 800);
+        }
+    </script>
+</body>
+</html>
