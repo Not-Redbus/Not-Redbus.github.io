@@ -9,7 +9,7 @@
     <style>
         body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
         
-        /* The Dropdown Logic (Restored) */
+        /* Dropdown Logic */
         details > summary { list-style: none; cursor: pointer; }
         details > summary::-webkit-details-marker { display: none; }
         details .icon:before { content: "[+]"; }
@@ -98,8 +98,11 @@
                         </div>
                     </div>
 
-                    <div class="border-l border-zinc-800 pl-0 lg:pl-8 flex flex-col justify-between" id="doc-panel">
-                        <div id="specs-content"></div>
+                    <div class="border-l border-zinc-800 pl-0 lg:pl-8 flex flex-col justify-between">
+                        
+                        <div id="specs-content">
+                            </div>
+
                         <div class="mt-8">
                             <span class="spec-label text-indigo-400 mb-2 block">>> PM_TAKEAWAY (LEARNING OBJECTIVE)</span>
                             <div class="insight-box rounded">
@@ -127,12 +130,14 @@
 
     <script>
         // CLOCK
-        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
 
-        // APP LOGIC
+        // DATA CONFIG
         let isProdMode = false; 
-        let db = generateDB();
-
+        let db = { id: "REC-001", content: "Critical Data", timestamp: "2025-01-01T00:00:00Z", status: "active" };
+        
         const content = {
             legacy: {
                 title: "⚠️ LEGACY API (NO REQUIREMENTS)",
@@ -152,13 +157,18 @@
             }
         };
 
-        // INIT
-        renderMode();
-        renderDB();
+        // INITIAL LOAD
+        window.onload = function() {
+            renderMode();
+            renderDB();
+            document.getElementById('client-input').value = `{\n  "content": "New Content"\n}`;
+        };
 
+        // FUNCTIONS
         function toggleMode() {
             isProdMode = !isProdMode;
-            db = generateDB(); 
+            // Reset DB for demo purposes
+            db = { id: "REC-001", content: "Critical Data", timestamp: "2025-01-01T00:00:00Z", status: "active" };
             renderMode();
             renderDB();
             document.getElementById('client-input').value = `{\n  "content": "New Content"\n}`;
@@ -210,3 +220,75 @@
 
         function execute(method) {
             const overlay = document.getElementById('client-overlay');
+            const status = document.getElementById('status-code');
+            
+            overlay.classList.add('hidden');
+            status.className = "status-badge";
+
+            if (method === 'GET') {
+                if (!db) {
+                    status.innerText = "404 NOT FOUND"; status.style.color = "#ef4444";
+                    overlay.innerText = "// 404: Resource not found.";
+                } else {
+                    status.innerText = "200 OK"; status.style.color = "#22c55e";
+                    if (isProdMode && db._archived) {
+                        status.innerText = "404 NOT FOUND (SOFT DELETE)"; status.style.color = "#eab308";
+                        overlay.innerText = "// Resource is archived. Client sees 404. Admin sees data.";
+                    } else {
+                        overlay.innerText = JSON.stringify(db, null, 2);
+                    }
+                }
+                overlay.classList.remove('hidden');
+            } else if (method === 'POST') {
+                const payload = parse(); if (!payload) return;
+                if (db && isProdMode) {
+                     status.innerText = "409 CONFLICT"; status.style.color = "#eab308";
+                } else {
+                    db = { ...payload, id: "REC-99", timestamp: new Date().toISOString() };
+                    status.innerText = "201 CREATED"; status.style.color = "#22c55e";
+                }
+                renderDB();
+            } else if (method === 'PUT') {
+                const payload = parse(); if (!payload) return;
+                if (isProdMode) {
+                    if (!payload.id || !payload.timestamp) {
+                        status.innerText = "400 BAD REQUEST"; status.style.color = "#ef4444";
+                        document.getElementById('client-input').value = "// ERROR: Missing 'id' or 'timestamp'.\n// Schema validation prevented data corruption.";
+                        return; 
+                    }
+                    db = payload; status.innerText = "200 OK"; status.style.color = "#22c55e";
+                } else {
+                    db = payload; status.innerText = "200 OK (CORRUPTED)"; status.style.color = "#ef4444";
+                }
+                renderDB();
+            } else if (method === 'DELETE') {
+                if (!db) { status.innerText = "404 NOT FOUND"; return; }
+                if (isProdMode) {
+                    db._archived = true; db.status = "archived"; db.deleted_at = new Date().toISOString();
+                    status.innerText = "204 NO CONTENT (ARCHIVED)"; status.style.color = "#22c55e";
+                } else {
+                    db = null; status.innerText = "204 NO CONTENT (DESTROYED)"; status.style.color = "#ef4444";
+                }
+                renderDB();
+            }
+        }
+
+        function renderDB() {
+            const el = document.getElementById('db-display');
+            if (db) {
+                el.innerText = JSON.stringify(db, null, 2);
+                if (db._archived) el.className = "text-[10px] text-zinc-500 whitespace-pre-wrap line-through opacity-50";
+                else if (db.id === undefined) el.className = "text-[10px] text-red-500 whitespace-pre-wrap font-bold"; 
+                else el.className = "text-[10px] text-green-500 whitespace-pre-wrap";
+            } else {
+                el.innerText = "// [NULL] DATA DESTROYED"; el.className = "text-[10px] text-red-600 font-bold whitespace-pre-wrap";
+            }
+        }
+
+        function parse() {
+            try { return JSON.parse(document.getElementById('client-input').value); }
+            catch(e) { document.getElementById('status-code').innerText = "INVALID JSON"; return null; }
+        }
+    </script>
+</body>
+</html>
