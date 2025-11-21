@@ -9,153 +9,167 @@
     <style>
         body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
         
-        /* Accordion Logic */
-        details > summary { list-style: none; cursor: pointer; }
-        details > summary::-webkit-details-marker { display: none; }
-        details .icon:before { content: "[+]"; }
-        details[open] .icon:before { content: "[-]"; color: #ef4444; }
-        summary:hover { background-color: #1a1a1a; color: #fff; }
+        /* UI Components */
+        .mode-switch { cursor: pointer; user-select: none; transition: all 0.3s; }
+        .mode-legacy { background: #450a0a; color: #fca5a5; border: 1px solid #991b1b; }
+        .mode-prod { background: #064e3b; color: #6ee7b7; border: 1px solid #059669; }
         
-        /* Terminal Styling */
+        .terminal-box { background-color: #09090b; border: 1px solid #27272a; padding: 10px; border-radius: 4px; }
+        .insight-box { background-color: #1e1b4b; border-left: 3px solid #6366f1; padding: 12px; } /* Blue Box for Insights */
+        
         .spec-label { color: #52525b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 4px; display: block; }
-        .spec-text { color: #a1a1aa; font-size: 12px; line-height: 1.6; margin-bottom: 12px; }
-        .terminal-box { background-color: #09090b; border: 1px solid #27272a; padding: 8px; border-radius: 4px; }
+        .spec-text { color: #a1a1aa; font-size: 11px; line-height: 1.5; }
         
-        /* Button Styling */
         .http-btn { font-size: 10px; font-weight: bold; padding: 6px; border: 1px solid #333; transition: all 0.1s; }
         .http-btn:hover { transform: translateY(-1px); }
-        .btn-get:hover { background: #0ea5e9; color: white; border-color: #0ea5e9; }
-        .btn-post:hover { background: #22c55e; color: white; border-color: #22c55e; }
-        .btn-put:hover { background: #eab308; color: white; border-color: #eab308; }
-        .btn-patch:hover { background: #a855f7; color: white; border-color: #a855f7; }
-        .btn-delete:hover { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn-get:hover { background: #0ea5e9; color: white; }
+        .btn-post:hover { background: #22c55e; color: white; }
+        .btn-put:hover { background: #eab308; color: white; }
+        .btn-delete:hover { background: #ef4444; color: white; }
 
         textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-family: inherit; font-size: 11px; }
         .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 2px; background: #27272a; color: #a1a1aa; }
     </style>
 </head>
-<body class="min-h-screen p-6 sm:p-12 max-w-5xl mx-auto">
+<body class="min-h-screen p-4 sm:p-12 max-w-6xl mx-auto">
 
-    <div class="mb-8 border-b border-zinc-800 pb-4 flex justify-between items-end">
+    <div class="mb-8 border-b border-zinc-800 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
             <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
-            <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\KNOWLEDGE_BASE\</h1>
+            <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\LAB_01\</h1>
         </div>
-        <div class="text-[10px] text-zinc-600 uppercase text-right">
-            <span class="block">SYS_TIME: <span id="clock">12:00:00</span></span>
-            <span class="block">MEM_USAGE: 14%</span>
+        
+        <div onclick="toggleMode()" id="mode-btn" class="mode-switch mode-legacy px-4 py-2 text-xs font-bold rounded shadow-lg flex items-center gap-2">
+            <span id="mode-icon">🔴</span>
+            <span>MODE: LEGACY (NO SPECS)</span>
         </div>
     </div>
 
-    <div class="space-y-2">
-
-        <details class="group border-b border-zinc-900 pb-2" open>
-            <summary class="flex items-center py-2 select-none transition-colors">
-                <span class="icon mr-4 font-bold"></span>
-                <span class="text-sm sm:text-base">01_http_state_lab.exe</span>
-                <span class="ml-auto bg-green-900 text-green-400 text-[10px] px-2 py-1 rounded hidden sm:inline-block">LIVE_DEMO</span>
-            </summary>
+    <div class="grid lg:grid-cols-2 gap-8">
+        
+        <div>
+            <div class="flex justify-between items-end mb-2">
+                <span class="spec-label text-orange-500">>> SERVER_DATABASE (STATE)</span>
+                <span id="db-status" class="text-[10px] text-red-500 font-bold">UNPROTECTED</span>
+            </div>
             
-            <div class="pl-0 sm:pl-10 pt-6 pb-8 grid lg:grid-cols-2 gap-12 border-l border-zinc-900 ml-2">
-                
-                <div>
-                    <span class="spec-label text-orange-500 mb-2">>> SERVER_STORAGE (DATABASE)</span>
-                    <div class="terminal-box min-h-[80px] mb-4 flex flex-col justify-center">
-                        <pre id="db-display" class="text-[10px] text-green-500 whitespace-pre-wrap">Loading...</pre>
-                    </div>
+            <div class="terminal-box min-h-[120px] mb-4 flex flex-col justify-center relative overflow-hidden">
+                <pre id="db-display" class="text-[10px] whitespace-pre-wrap transition-all duration-300"></pre>
+                <div id="watermark" class="absolute top-2 right-2 text-[40px] font-black text-white/5 pointer-events-none">LEGACY</div>
+            </div>
 
-                    <div class="grid grid-cols-5 gap-2 mb-4">
-                        <button onclick="execute('GET')" class="http-btn btn-get text-blue-400">GET</button>
-                        <button onclick="execute('POST')" class="http-btn btn-post text-green-400">POST</button>
-                        <button onclick="execute('PUT')" class="http-btn btn-put text-yellow-400">PUT</button>
-                        <button onclick="execute('PATCH')" class="http-btn btn-patch text-purple-400">PATCH</button>
-                        <button onclick="execute('DELETE')" class="http-btn btn-delete text-red-400">DEL</button>
-                    </div>
+            <div class="grid grid-cols-4 gap-2 mb-4">
+                <button onclick="execute('GET')" class="http-btn btn-get text-blue-400">GET</button>
+                <button onclick="execute('POST')" class="http-btn btn-post text-green-400">POST</button>
+                <button onclick="execute('PUT')" class="http-btn btn-put text-yellow-400">PUT</button>
+                <button onclick="execute('DELETE')" class="http-btn btn-delete text-red-400">DEL</button>
+            </div>
 
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="spec-label">>> CLIENT_PAYLOAD</span>
-                        <span id="status-code" class="status-badge">READY</span>
-                    </div>
-                    <div class="terminal-box h-32 mb-2 relative">
-                        <textarea id="client-input" class="text-orange-400 h-full" placeholder="// Input JSON..."></textarea>
-                        <div id="client-overlay" class="absolute inset-0 bg-black/95 text-blue-400 text-[10px] p-2 hidden whitespace-pre-wrap font-mono overflow-auto"></div>
-                    </div>
-                    
-                    <div class="border-t border-zinc-800 pt-2 mt-4">
-                         <span class="spec-label">>> NETWORK_TRAFFIC</span>
-                         <div id="net-log" class="text-[10px] text-zinc-500 font-mono h-16 overflow-y-auto space-y-1"></div>
-                    </div>
-                </div>
+            <div class="flex justify-between items-end mb-1">
+                <span class="spec-label">>> CLIENT_PAYLOAD</span>
+                <span id="status-code" class="status-badge">READY</span>
+            </div>
+            <div class="terminal-box h-32 relative">
+                <textarea id="client-input" class="text-orange-400 h-full" placeholder="// Input JSON..."></textarea>
+                <div id="client-overlay" class="absolute inset-0 bg-black/95 text-blue-400 text-[10px] p-2 hidden whitespace-pre-wrap font-mono overflow-auto"></div>
+            </div>
+        </div>
 
-                <div class="opacity-90 hover:opacity-100 transition-opacity">
-                    <span class="spec-label text-zinc-400 mb-4 border-b border-zinc-800 pb-1 block">>> DOCUMENTATION (SPEC-01)</span>
-                    
-                    <div class="mb-6">
-                        <span class="spec-label">01. Problem Statement</span>
-                        <p class="spec-text">
-                            Frontend clients are currently using <code class="text-yellow-500">PUT</code> for partial updates, which is inadvertently wiping out unsubmitted fields (e.g., timestamps, IDs). This causes data loss.
-                        </p>
-                    </div>
+        <div class="border-l border-zinc-800 pl-0 lg:pl-8 flex flex-col h-full justify-between" id="doc-panel">
+            
+            <div id="specs-content"></div>
 
-                    <div class="mb-6">
-                        <span class="spec-label">02. Business Rules (Gherkin)</span>
-                        
-                        <div class="mb-3">
-                            <p class="text-[10px] text-zinc-500 mb-1 uppercase font-bold">Rule A: Destructive Replacement (PUT)</p>
-                            <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 font-mono leading-relaxed">
-                                <span class="text-purple-400">GIVEN</span> a record exists<br>
-                                <span class="text-purple-400">WHEN</span> a user sends a PUT request<br>
-                                <span class="text-purple-400">THEN</span> replace the <span class="text-red-400">ENTIRE</span> object with the payload<br>
-                                <span class="text-purple-400">AND</span> delete any fields not present in payload.
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="text-[10px] text-zinc-500 mb-1 uppercase font-bold">Rule B: Safe Merge (PATCH)</p>
-                            <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 font-mono leading-relaxed">
-                                <span class="text-purple-400">GIVEN</span> a record exists<br>
-                                <span class="text-purple-400">WHEN</span> a user sends a PATCH request<br>
-                                <span class="text-purple-400">THEN</span> update only the specified fields<br>
-                                <span class="text-purple-400">AND</span> preserve all other data.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <span class="spec-label">03. Constraints</span>
-                        <ul class="list-disc list-inside spec-text ml-1 text-[10px]">
-                            <li><strong>Idempotency:</strong> POST requests must return <code class="text-yellow-500">409 Conflict</code> if the resource already exists.</li>
-                            <li><strong>Persistence:</strong> Session data is ephemeral.</li>
-                        </ul>
-                    </div>
-
+            <div class="mt-8">
+                <span class="spec-label text-indigo-400 mb-2 block">>> PM_TAKEAWAY (LEARNING OBJECTIVE)</span>
+                <div class="insight-box rounded">
+                    <p id="insight-text" class="text-[11px] text-indigo-100 leading-relaxed font-medium">
+                        Loading insight...
+                    </p>
                 </div>
             </div>
-        </details>
 
-        <div class="flex items-center py-2 text-zinc-800 cursor-not-allowed">
-            <span class="mr-4">[?]</span> <span class="text-sm">02_status_codes.exe</span>
         </div>
 
     </div>
 
     <script>
-        // CLOCK
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }, 1000);
+        let isProdMode = false; 
+        let db = generateDB();
 
-        // DATA STATE
-        let db = {
-            id: "REC-991",
-            content: "Important User Data",
-            timestamp: "2025-11-21T12:30:00Z",
-            status: "active"
+        const content = {
+            legacy: {
+                title: "⚠️ LEGACY API (NO REQUIREMENTS)",
+                desc: "Behaving as raw code dictates. No safeguards.",
+                put_rule: "<span class='text-red-400'>RISK:</span> Blind Replacement. If you PUT without an ID, the ID is deleted.",
+                del_rule: "<span class='text-red-400'>RISK:</span> Hard Delete. Data is destroyed immediately.",
+                status: "UNPROTECTED",
+                insight: "WHAT TO WATCH: Try clicking DELETE. Notice the data is gone forever. This happens when PMs assume engineers will 'just know' to archive data. Without a written requirement for Soft Deletes, you get Hard Deletes."
+            },
+            prod: {
+                title: "✅ V2.0 API (WITH PM SPECS)",
+                desc: "Enforcing Business Rules for Data Integrity.",
+                put_rule: "<span class='text-green-400'>SAFE:</span> Schema Validation. Rejects payloads missing critical fields.",
+                del_rule: "<span class='text-green-400'>SAFE:</span> Soft Delete. Marks as 'archived' (status: inactive).",
+                status: "PROTECTED",
+                insight: "WHAT TO WATCH: Try sending a bad PUT request. The system fights back (400 Bad Request). This friction is intentional. We are trading speed for safety, ensuring the Frontend cannot accidentally corrupt the Database."
+            }
         };
 
         // INIT
+        renderMode();
         renderDB();
-        document.getElementById('client-input').value = `{\n  "content": "New Content Only"\n}`;
+
+        function toggleMode() {
+            isProdMode = !isProdMode;
+            db = generateDB(); 
+            renderMode();
+            renderDB();
+            document.getElementById('client-input').value = `{\n  "content": "New Content"\n}`;
+            document.getElementById('status-code').innerText = "SYSTEM RESET";
+            document.getElementById('status-code').style.color = "#a1a1aa";
+        }
+
+        function renderMode() {
+            const btn = document.getElementById('mode-btn');
+            const watermark = document.getElementById('watermark');
+            const dbStatus = document.getElementById('db-status');
+            const specs = document.getElementById('specs-content');
+            const insight = document.getElementById('insight-text');
+            
+            const data = isProdMode ? content.prod : content.legacy;
+
+            if (isProdMode) {
+                btn.className = "mode-switch mode-prod px-4 py-2 text-xs font-bold rounded shadow-lg flex items-center gap-2";
+                btn.innerHTML = `<span>🟢</span><span>MODE: V2.0 (WITH SPECS)</span>`;
+                watermark.innerText = "SECURE";
+                watermark.className = "absolute top-2 right-2 text-[40px] font-black text-green-900/20 pointer-events-none";
+                dbStatus.className = "text-[10px] text-green-500 font-bold";
+            } else {
+                btn.className = "mode-switch mode-legacy px-4 py-2 text-xs font-bold rounded shadow-lg flex items-center gap-2";
+                btn.innerHTML = `<span>🔴</span><span>MODE: LEGACY (NO SPECS)</span>`;
+                watermark.innerText = "LEGACY";
+                watermark.className = "absolute top-2 right-2 text-[40px] font-black text-red-900/10 pointer-events-none";
+                dbStatus.className = "text-[10px] text-red-500 font-bold";
+            }
+
+            dbStatus.innerText = data.status;
+            insight.innerText = data.insight;
+
+            specs.innerHTML = `
+                <div class="mb-6">
+                    <h3 class="text-sm font-bold text-white mb-2">${data.title}</h3>
+                    <p class="spec-text italic mb-4">${data.desc}</p>
+                </div>
+                <div class="mb-4">
+                    <span class="spec-label">01. PUT BEHAVIOR</span>
+                    <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 leading-relaxed">${data.put_rule}</div>
+                </div>
+                <div class="mb-4">
+                    <span class="spec-label">02. DELETE BEHAVIOR</span>
+                    <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 leading-relaxed">${data.del_rule}</div>
+                </div>
+            `;
+        }
 
         function execute(method) {
             const overlay = document.getElementById('client-overlay');
@@ -168,90 +182,82 @@
             // GET
             if (method === 'GET') {
                 if (!db) {
-                    log("GET", 404); status.innerText = "404 NOT FOUND"; status.style.color = "#ef4444";
-                    overlay.innerText = "// Error: Resource is null";
+                    status.innerText = "404 NOT FOUND"; status.style.color = "#ef4444";
+                    overlay.innerText = "// 404: Resource not found.";
                 } else {
-                    log("GET", 200); status.innerText = "200 OK"; status.style.color = "#22c55e";
-                    overlay.innerText = JSON.stringify(db, null, 2);
+                    status.innerText = "200 OK"; status.style.color = "#22c55e";
+                    if (isProdMode && db._archived) {
+                        status.innerText = "404 NOT FOUND (SOFT DELETE)"; status.style.color = "#eab308";
+                        overlay.innerText = "// Resource is archived. Client sees 404. Admin sees data.";
+                    } else {
+                        overlay.innerText = JSON.stringify(db, null, 2);
+                    }
                 }
                 overlay.classList.remove('hidden');
             }
 
             // POST
             else if (method === 'POST') {
-                const payload = parse();
-                if (!payload) return;
-                if (db) {
-                    log("POST", 409); status.innerText = "409 CONFLICT"; status.style.color = "#eab308";
+                const payload = parse(); if (!payload) return;
+                if (db && isProdMode) {
+                     status.innerText = "409 CONFLICT"; status.style.color = "#eab308";
                 } else {
-                    db = { ...payload, id: "REC-" + Math.floor(Math.random()*1000), timestamp: new Date().toISOString() };
-                    renderDB();
-                    log("POST", 201); status.innerText = "201 CREATED"; status.style.color = "#22c55e";
+                    db = { ...payload, id: "REC-99", timestamp: new Date().toISOString() };
+                    status.innerText = "201 CREATED"; status.style.color = "#22c55e";
                 }
+                renderDB();
             }
 
             // PUT
             else if (method === 'PUT') {
-                const payload = parse();
-                if (!payload) return;
-                if (!db) {
-                    log("PUT", 404); status.innerText = "404 NOT FOUND";
+                const payload = parse(); if (!payload) return;
+                if (isProdMode) {
+                    if (!payload.id || !payload.timestamp) {
+                        status.innerText = "400 BAD REQUEST"; status.style.color = "#ef4444";
+                        document.getElementById('client-input').value = "// ERROR: Missing 'id' or 'timestamp'.\n// Schema validation prevented data corruption.";
+                        return; 
+                    }
+                    db = payload; status.innerText = "200 OK"; status.style.color = "#22c55e";
                 } else {
-                    db = payload; // DESTRUCTIVE REPLACEMENT
-                    renderDB();
-                    log("PUT", 200); status.innerText = "200 REPLACED"; status.style.color = "#eab308";
+                    db = payload; status.innerText = "200 OK (CORRUPTED)"; status.style.color = "#ef4444";
                 }
-            }
-
-            // PATCH
-            else if (method === 'PATCH') {
-                const payload = parse();
-                if (!payload) return;
-                if (!db) {
-                    log("PATCH", 404); status.innerText = "404 NOT FOUND";
-                } else {
-                    db = { ...db, ...payload }; // MERGE
-                    renderDB();
-                    log("PATCH", 200); status.innerText = "200 UPDATED"; status.style.color = "#a855f7";
-                }
+                renderDB();
             }
 
             // DELETE
             else if (method === 'DELETE') {
-                if (!db) {
-                    log("DELETE", 404); status.innerText = "404 NOT FOUND";
+                if (!db) { status.innerText = "404 NOT FOUND"; return; }
+                if (isProdMode) {
+                    db._archived = true; db.status = "archived"; db.deleted_at = new Date().toISOString();
+                    status.innerText = "204 NO CONTENT (ARCHIVED)"; status.style.color = "#22c55e";
                 } else {
-                    db = null;
-                    renderDB();
-                    log("DELETE", 204); status.innerText = "204 NO CONTENT";
+                    db = null; status.innerText = "204 NO CONTENT (DESTROYED)"; status.style.color = "#ef4444";
                 }
+                renderDB();
             }
+        }
+
+        function generateDB() {
+            return { id: "REC-001", content: "Critical Data", timestamp: "2025-01-01T00:00:00Z", status: "active" };
         }
 
         function renderDB() {
             const el = document.getElementById('db-display');
             if (db) {
                 el.innerText = JSON.stringify(db, null, 2);
-                el.className = "text-[10px] text-green-500 whitespace-pre-wrap";
+                if (db._archived) el.className = "text-[10px] text-zinc-500 whitespace-pre-wrap line-through opacity-50";
+                else if (db.id === undefined) el.className = "text-[10px] text-red-500 whitespace-pre-wrap font-bold"; 
+                else el.className = "text-[10px] text-green-500 whitespace-pre-wrap";
             } else {
-                el.innerText = "// [NULL] DATABASE EMPTY";
-                el.className = "text-[10px] text-zinc-600 whitespace-pre-wrap";
+                el.innerText = "// [NULL] DATA DESTROYED"; el.className = "text-[10px] text-red-600 font-bold whitespace-pre-wrap";
             }
         }
 
         function parse() {
             try { return JSON.parse(document.getElementById('client-input').value); }
-            catch(e) { 
-                document.getElementById('status-code').innerText = "INVALID JSON";
-                document.getElementById('status-code').style.color = "#ef4444";
-                return null; 
-            }
-        }
-
-        function log(m, c) {
-            const el = document.getElementById('net-log');
-            el.innerHTML = `<div class="flex justify-between"><span>${m}</span><span>${c}</span></div>` + el.innerHTML;
+            catch(e) { document.getElementById('status-code').innerText = "INVALID JSON"; return null; }
         }
     </script>
 </body>
+</html>
 </html>
