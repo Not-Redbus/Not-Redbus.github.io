@@ -8,26 +8,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
+        
+        /* Accordion Logic */
         details > summary { list-style: none; cursor: pointer; }
         details > summary::-webkit-details-marker { display: none; }
         details .icon:before { content: "[+]"; }
         details[open] .icon:before { content: "[-]"; color: #ef4444; }
         summary:hover { background-color: #1a1a1a; color: #fff; }
         
-        /* Spec Sheet Styling */
+        /* Terminal Styling */
         .spec-label { color: #52525b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 4px; display: block; }
         .spec-text { color: #a1a1aa; font-size: 12px; line-height: 1.6; margin-bottom: 12px; }
+        .terminal-box { background-color: #09090b; border: 1px solid #27272a; padding: 8px; border-radius: 4px; }
         
-        .method-btn { text-align: left; border: 1px solid #333; padding: 8px; font-size: 12px; transition: all 0.2s; }
-        .method-btn:hover { border-color: #f59e0b; background: #111; color: white; }
-        .method-active { background: #f59e0b; color: black; font-weight: bold; border-color: #f59e0b; }
+        /* Button Styling */
+        .http-btn { font-size: 10px; font-weight: bold; padding: 6px; border: 1px solid #333; transition: all 0.1s; }
+        .http-btn:hover { transform: translateY(-1px); }
+        .btn-get:hover { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+        .btn-post:hover { background: #22c55e; color: white; border-color: #22c55e; }
+        .btn-put:hover { background: #eab308; color: white; border-color: #eab308; }
+        .btn-patch:hover { background: #a855f7; color: white; border-color: #a855f7; }
+        .btn-delete:hover { background: #ef4444; color: white; border-color: #ef4444; }
+
+        textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-family: inherit; font-size: 11px; }
+        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 2px; background: #27272a; color: #a1a1aa; }
     </style>
 </head>
-<body class="min-h-screen p-6 sm:p-12 max-w-4xl mx-auto">
+<body class="min-h-screen p-6 sm:p-12 max-w-5xl mx-auto">
 
-    <div class="mb-8 border-b border-zinc-800 pb-4">
-        <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
-        <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\KNOWLEDGE_BASE\</h1>
+    <div class="mb-8 border-b border-zinc-800 pb-4 flex justify-between items-end">
+        <div>
+            <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
+            <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\KNOWLEDGE_BASE\</h1>
+        </div>
+        <div class="text-[10px] text-zinc-600 uppercase text-right">
+            <span class="block">SYS_TIME: <span id="clock">12:00:00</span></span>
+            <span class="block">MEM_USAGE: 14%</span>
+        </div>
     </div>
 
     <div class="space-y-2">
@@ -35,106 +52,205 @@
         <details class="group border-b border-zinc-900 pb-2" open>
             <summary class="flex items-center py-2 select-none transition-colors">
                 <span class="icon mr-4 font-bold"></span>
-                <span class="text-sm sm:text-base">01_http_methods_visualizer.exe</span>
-                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">LESSON: VERBS</span>
+                <span class="text-sm sm:text-base">01_http_state_lab.exe</span>
+                <span class="ml-auto bg-green-900 text-green-400 text-[10px] px-2 py-1 rounded hidden sm:inline-block">LIVE_DEMO</span>
             </summary>
             
-            <div class="pl-10 pt-4 pb-8 grid lg:grid-cols-3 gap-8 border-l border-zinc-900 ml-2">
+            <div class="pl-0 sm:pl-10 pt-6 pb-8 grid lg:grid-cols-2 gap-12 border-l border-zinc-900 ml-2">
                 
-                <div class="col-span-1 flex flex-col gap-2">
-                    <span class="spec-label text-orange-500">>> SELECT METHOD</span>
-                    <button onclick="render('GET')" class="method-btn" id="btn-GET">GET (Read)</button>
-                    <button onclick="render('POST')" class="method-btn" id="btn-POST">POST (Create)</button>
-                    <button onclick="render('PUT')" class="method-btn" id="btn-PUT">PUT (Replace)</button>
-                    <button onclick="render('DELETE')" class="method-btn" id="btn-DELETE">DELETE (Remove)</button>
-                </div>
+                <div>
+                    <span class="spec-label text-orange-500 mb-2">>> SERVER_STORAGE (DATABASE)</span>
+                    <div class="terminal-box min-h-[80px] mb-4 flex flex-col justify-center">
+                        <pre id="db-display" class="text-[10px] text-green-500 whitespace-pre-wrap">Loading...</pre>
+                    </div>
 
-                <div class="col-span-2">
-                    <div id="display-area" class="bg-zinc-900 p-4 border border-zinc-800 min-h-[300px]">
-                        <div class="text-zinc-500 text-xs text-center mt-20">
-                            &lt; AWAITING SELECTION &gt;
-                        </div>
+                    <div class="grid grid-cols-5 gap-2 mb-4">
+                        <button onclick="execute('GET')" class="http-btn btn-get text-blue-400">GET</button>
+                        <button onclick="execute('POST')" class="http-btn btn-post text-green-400">POST</button>
+                        <button onclick="execute('PUT')" class="http-btn btn-put text-yellow-400">PUT</button>
+                        <button onclick="execute('PATCH')" class="http-btn btn-patch text-purple-400">PATCH</button>
+                        <button onclick="execute('DELETE')" class="http-btn btn-delete text-red-400">DEL</button>
+                    </div>
+
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="spec-label">>> CLIENT_PAYLOAD</span>
+                        <span id="status-code" class="status-badge">READY</span>
+                    </div>
+                    <div class="terminal-box h-32 mb-2 relative">
+                        <textarea id="client-input" class="text-orange-400 h-full" placeholder="// Input JSON..."></textarea>
+                        <div id="client-overlay" class="absolute inset-0 bg-black/95 text-blue-400 text-[10px] p-2 hidden whitespace-pre-wrap font-mono overflow-auto"></div>
+                    </div>
+                    
+                    <div class="border-t border-zinc-800 pt-2 mt-4">
+                         <span class="spec-label">>> NETWORK_TRAFFIC</span>
+                         <div id="net-log" class="text-[10px] text-zinc-500 font-mono h-16 overflow-y-auto space-y-1"></div>
                     </div>
                 </div>
 
+                <div class="opacity-90 hover:opacity-100 transition-opacity">
+                    <span class="spec-label text-zinc-400 mb-4 border-b border-zinc-800 pb-1 block">>> DOCUMENTATION (SPEC-01)</span>
+                    
+                    <div class="mb-6">
+                        <span class="spec-label">01. Problem Statement</span>
+                        <p class="spec-text">
+                            Frontend clients are currently using <code class="text-yellow-500">PUT</code> for partial updates, which is inadvertently wiping out unsubmitted fields (e.g., timestamps, IDs). This causes data loss.
+                        </p>
+                    </div>
+
+                    <div class="mb-6">
+                        <span class="spec-label">02. Business Rules (Gherkin)</span>
+                        
+                        <div class="mb-3">
+                            <p class="text-[10px] text-zinc-500 mb-1 uppercase font-bold">Rule A: Destructive Replacement (PUT)</p>
+                            <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 font-mono leading-relaxed">
+                                <span class="text-purple-400">GIVEN</span> a record exists<br>
+                                <span class="text-purple-400">WHEN</span> a user sends a PUT request<br>
+                                <span class="text-purple-400">THEN</span> replace the <span class="text-red-400">ENTIRE</span> object with the payload<br>
+                                <span class="text-purple-400">AND</span> delete any fields not present in payload.
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-[10px] text-zinc-500 mb-1 uppercase font-bold">Rule B: Safe Merge (PATCH)</p>
+                            <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 font-mono leading-relaxed">
+                                <span class="text-purple-400">GIVEN</span> a record exists<br>
+                                <span class="text-purple-400">WHEN</span> a user sends a PATCH request<br>
+                                <span class="text-purple-400">THEN</span> update only the specified fields<br>
+                                <span class="text-purple-400">AND</span> preserve all other data.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="spec-label">03. Constraints</span>
+                        <ul class="list-disc list-inside spec-text ml-1 text-[10px]">
+                            <li><strong>Idempotency:</strong> POST requests must return <code class="text-yellow-500">409 Conflict</code> if the resource already exists.</li>
+                            <li><strong>Persistence:</strong> Session data is ephemeral.</li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </details>
 
         <div class="flex items-center py-2 text-zinc-800 cursor-not-allowed">
             <span class="mr-4">[?]</span> <span class="text-sm">02_status_codes.exe</span>
         </div>
-        <div class="flex items-center py-2 text-zinc-800 cursor-not-allowed">
-            <span class="mr-4">[?]</span> <span class="text-sm">03_api_headers.exe</span>
-        </div>
 
     </div>
 
     <script>
-        const data = {
-            'GET': {
-                desc: "Retrieves data from the server. Should have NO side effects.",
-                payload: "NO PAYLOAD (Data is in URL params)",
-                safety: "✅ SAFE (Idempotent)",
-                pm_note: "Always use GET for search, filtering, or viewing profiles. Never use GET to trigger an action (like 'Delete Account') because web crawlers clicking links could accidentally delete data."
-            },
-            'POST': {
-                desc: "Submits data to be processed to a specified resource.",
-                payload: "HAS PAYLOAD (JSON Body)",
-                safety: "❌ UNSAFE (Not Idempotent)",
-                pm_note: "If a user double-clicks a 'Submit' button on a POST request, you might charge their credit card twice. You MUST write requirements for 'Duplicate Submission Prevention' in your PRD."
-            },
-            'PUT': {
-                desc: "Updates a resource by replacing it entirely.",
-                payload: "HAS PAYLOAD (Full Object)",
-                safety: "❌ UNSAFE (Modifies Data)",
-                pm_note: "PUT destroys what was there before. If you only want to update an email address but send a PUT with *only* the email, you might accidentally delete the user's name and phone number."
-            },
-            'DELETE': {
-                desc: "Deletes the specified resource.",
-                payload: "USUALLY NO PAYLOAD",
-                safety: "❌ DESTRUCTIVE",
-                pm_note: "Deleting is permanent. PMs should often request 'Soft Deletes' (setting a flag to is_active=false) rather than actual DELETE requests, to preserve data history."
-            }
+        // CLOCK
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // DATA STATE
+        let db = {
+            id: "REC-991",
+            content: "Important User Data",
+            timestamp: "2025-11-21T12:30:00Z",
+            status: "active"
         };
 
-        function render(method) {
-            // Reset Buttons
-            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('method-active'));
-            document.getElementById(`btn-${method}`).classList.add('method-active');
+        // INIT
+        renderDB();
+        document.getElementById('client-input').value = `{\n  "content": "New Content Only"\n}`;
 
-            // Render Content
-            const screen = document.getElementById('display-area');
-            const info = data[method];
+        function execute(method) {
+            const overlay = document.getElementById('client-overlay');
+            const status = document.getElementById('status-code');
+            const input = document.getElementById('client-input');
             
-            screen.innerHTML = `
-                <div class="flex justify-between items-center mb-6 border-b border-zinc-700 pb-2">
-                    <h2 class="text-2xl font-bold text-white">${method}</h2>
-                    <span class="text-xs bg-zinc-800 px-2 py-1 text-zinc-400">HTTP/1.1</span>
-                </div>
+            overlay.classList.add('hidden');
+            status.className = "status-badge";
 
-                <div class="mb-6">
-                    <span class="spec-label">DEFINITION</span>
-                    <p class="text-sm text-zinc-300 leading-relaxed">${info.desc}</p>
-                </div>
+            // GET
+            if (method === 'GET') {
+                if (!db) {
+                    log("GET", 404); status.innerText = "404 NOT FOUND"; status.style.color = "#ef4444";
+                    overlay.innerText = "// Error: Resource is null";
+                } else {
+                    log("GET", 200); status.innerText = "200 OK"; status.style.color = "#22c55e";
+                    overlay.innerText = JSON.stringify(db, null, 2);
+                }
+                overlay.classList.remove('hidden');
+            }
 
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <span class="spec-label">PAYLOAD?</span>
-                        <span class="text-xs font-bold text-orange-500 border border-orange-900 bg-orange-900/20 px-2 py-1 block text-center">${info.payload}</span>
-                    </div>
-                    <div>
-                        <span class="spec-label">SAFETY?</span>
-                        <span class="text-xs font-bold text-zinc-300 border border-zinc-700 bg-zinc-800 px-2 py-1 block text-center">${info.safety}</span>
-                    </div>
-                </div>
+            // POST
+            else if (method === 'POST') {
+                const payload = parse();
+                if (!payload) return;
+                if (db) {
+                    log("POST", 409); status.innerText = "409 CONFLICT"; status.style.color = "#eab308";
+                } else {
+                    db = { ...payload, id: "REC-" + Math.floor(Math.random()*1000), timestamp: new Date().toISOString() };
+                    renderDB();
+                    log("POST", 201); status.innerText = "201 CREATED"; status.style.color = "#22c55e";
+                }
+            }
 
-                <div class="bg-blue-900/20 border-l-2 border-blue-500 p-3">
-                    <span class="spec-label text-blue-400">PM TAKEAWAY</span>
-                    <p class="text-xs text-blue-200 italic leading-relaxed">
-                        "${info.pm_note}"
-                    </p>
-                </div>
-            `;
+            // PUT
+            else if (method === 'PUT') {
+                const payload = parse();
+                if (!payload) return;
+                if (!db) {
+                    log("PUT", 404); status.innerText = "404 NOT FOUND";
+                } else {
+                    db = payload; // DESTRUCTIVE REPLACEMENT
+                    renderDB();
+                    log("PUT", 200); status.innerText = "200 REPLACED"; status.style.color = "#eab308";
+                }
+            }
+
+            // PATCH
+            else if (method === 'PATCH') {
+                const payload = parse();
+                if (!payload) return;
+                if (!db) {
+                    log("PATCH", 404); status.innerText = "404 NOT FOUND";
+                } else {
+                    db = { ...db, ...payload }; // MERGE
+                    renderDB();
+                    log("PATCH", 200); status.innerText = "200 UPDATED"; status.style.color = "#a855f7";
+                }
+            }
+
+            // DELETE
+            else if (method === 'DELETE') {
+                if (!db) {
+                    log("DELETE", 404); status.innerText = "404 NOT FOUND";
+                } else {
+                    db = null;
+                    renderDB();
+                    log("DELETE", 204); status.innerText = "204 NO CONTENT";
+                }
+            }
+        }
+
+        function renderDB() {
+            const el = document.getElementById('db-display');
+            if (db) {
+                el.innerText = JSON.stringify(db, null, 2);
+                el.className = "text-[10px] text-green-500 whitespace-pre-wrap";
+            } else {
+                el.innerText = "// [NULL] DATABASE EMPTY";
+                el.className = "text-[10px] text-zinc-600 whitespace-pre-wrap";
+            }
+        }
+
+        function parse() {
+            try { return JSON.parse(document.getElementById('client-input').value); }
+            catch(e) { 
+                document.getElementById('status-code').innerText = "INVALID JSON";
+                document.getElementById('status-code').style.color = "#ef4444";
+                return null; 
+            }
+        }
+
+        function log(m, c) {
+            const el = document.getElementById('net-log');
+            el.innerHTML = `<div class="flex justify-between"><span>${m}</span><span>${c}</span></div>` + el.innerHTML;
         }
     </script>
 </body>
