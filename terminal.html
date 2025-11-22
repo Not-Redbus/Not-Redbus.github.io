@@ -1,142 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANDREW | DIRECTORY</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* CORE THEME */
-        body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
-        
-        /* ACCORDION LOGIC */
-        details > summary { list-style: none; cursor: pointer; }
-        details > summary::-webkit-details-marker { display: none; }
-        details .icon:before { content: "[+]"; }
-        details[open] .icon:before { content: "[-]"; color: #ef4444; } /* Turns Red when open */
-        summary:hover { background-color: #1a1a1a; color: #fff; }
-        
-        /* UI UTILS */
-        textarea { resize: none; outline: none; }
-        .spec-label { color: #52525b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 4px; display: block; }
-        .spec-text { color: #a1a1aa; font-size: 12px; line-height: 1.6; margin-bottom: 12px; }
-        
-        /* INSIGHT BOX STYLE */
-        .insight-box { background-color: #1e1b4b; border-left: 3px solid #6366f1; padding: 12px; }
-        
-        /* BUTTONS */
-        .btn-base { font-size: 12px; background: #27272a; color: #a1a1aa; padding: 4px 12px; border: 1px solid #3f3f46; transition: all 0.2s; }
-        .btn-base:hover { background: #f59e0b; color: black; border-color: #f59e0b; }
-    </style>
-</head>
-<body class="min-h-screen p-6 sm:p-12 max-w-4xl mx-auto">
-
-    <!-- HEADER -->
-    <div class="mb-8 border-b border-zinc-800 pb-4">
-        <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
-        <h1 class="text-lg sm:text-xl">C:\USERS\ANDREW\PROJECTS\</h1>
-    </div>
-
-    <!-- MODULE LIST -->
-    <div class="space-y-2">
-
-        <!-- == TEMPLATE MODULE START == -->
+<!-- MODULE 02: STATUS CODE TRIAGE -->
         <details class="group border-b border-zinc-900 pb-2">
-            <!-- 1. THE TITLE BAR -->
             <summary class="flex items-center py-2 select-none transition-colors">
                 <span class="icon mr-4 font-bold"></span>
-                <span class="text-sm sm:text-base">00_module_template_name.exe</span>
-                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Status: BETA | V.0.1</span>
+                <span class="text-sm sm:text-base">02_status_code_triage.exe</span>
+                <span class="ml-auto text-[10px] text-zinc-600 uppercase hidden sm:block">Status: ACTIVE | V.1.0</span>
             </summary>
             
-            <!-- CONTENT CONTAINER -->
-            <div class="pl-10 pt-4 pb-8">
-            
-                <!-- 2. THE WORKSPACE (2-Column Grid) -->
-                <div class="grid lg:grid-cols-2 gap-12 mb-8">
+            <div class="pl-10 pt-4 pb-8 grid lg:grid-cols-2 gap-12 border-l border-zinc-900 ml-2">
+                
+                <!-- LEFT: THE TRIAGE CONSOLE -->
+                <div>
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="spec-label text-orange-500">>> INCIDENT_REPORT</span>
+                        <span class="text-[10px] text-zinc-500">TICKET #<span id="ticket-id">101</span></span>
+                    </div>
                     
-                    <!-- LEFT COLUMN: INTERACTIVE TOOL -->
-                    <div>
-                        <div class="flex justify-between items-end mb-2">
-                            <span class="spec-label text-orange-500">>> EXECUTABLE</span>
-                        </div>
-                        
-                        <!-- INPUT AREA -->
-                        <div class="bg-zinc-900 p-1 border border-zinc-800 mb-2">
-                            <textarea id="toolInput" class="w-full h-32 bg-black text-green-500 p-2 text-xs focus:bg-zinc-900 transition-colors" placeholder='INPUT DATA...'></textarea>
-                        </div>
-                        
-                        <!-- ACTION BUTTON -->
-                        <button onclick="runTool()" class="mt-2 text-xs bg-zinc-800 hover:bg-amber-600 hover:text-black px-3 py-2 border border-zinc-700 transition-colors w-full font-bold">
-                            > EXECUTE SCRIPT
-                        </button>
-                        
-                        <!-- OUTPUT AREA -->
-                        <div id="toolOutput" class="mt-2 text-xs font-bold h-6 border-b border-zinc-800 flex items-center text-zinc-500">
-                            // WAITING FOR INPUT
-                        </div>
-                    </div>
-
-                    <!-- RIGHT COLUMN: DOCUMENTATION -->
-                    <div class="border-l border-zinc-800 pl-6 opacity-80 hover:opacity-100 transition-opacity">
-                        <span class="spec-label text-zinc-400 mb-4 border-b border-zinc-800 pb-1 block">>> PM_DOCUMENTATION (PRD)</span>
-                        
-                        <!-- SECTION A: PROBLEM -->
-                        <div class="mb-4">
-                            <span class="spec-label">01. Problem Statement</span>
-                            <p class="spec-text">
-                                [Describe the business problem here. Why does this tool need to exist?]
-                            </p>
-                        </div>
-
-                        <!-- SECTION B: REQUIREMENTS -->
-                        <div class="mb-4">
-                            <span class="spec-label">02. Business Logic</span>
-                            <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 font-mono leading-relaxed">
-                                <span class="text-purple-400">IF</span> input is X<br>
-                                <span class="text-purple-400">THEN</span> output Y<br>
-                            </div>
-                        </div>
-
-                        <!-- SECTION C: CONSTRAINTS -->
-                        <div>
-                            <span class="spec-label">03. Constraints</span>
-                            <ul class="list-disc list-inside spec-text ml-1">
-                                <li>Constraint 1</li>
-                                <li>Constraint 2</li>
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 3. THE OVERVIEW CARD (New Addition) -->
-                <div class="border-t border-zinc-900 pt-6">
-                    <span class="spec-label text-indigo-400 mb-2 block">>> MODULE OVERVIEW & KEY INSIGHTS</span>
-                    <div class="insight-box rounded">
-                        <p class="text-[11px] text-indigo-100 leading-relaxed font-medium">
-                            [Use this space to explain what you learned building this module. Example: "This simulation demonstrates how X impacts Y in a production environment."]
+                    <!-- SCENARIO CARD -->
+                    <div class="bg-zinc-900 p-4 border border-zinc-800 mb-4 min-h-[100px] flex flex-col justify-center">
+                        <p id="scenario-text" class="text-sm text-white font-medium leading-relaxed">
+                            Initializing Triage System...
                         </p>
                     </div>
+                    
+                    <!-- DECISION MATRIX -->
+                    <span class="spec-label mb-2 block">>> ASSIGN STATUS CODE</span>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <button onclick="check(200)" class="btn-base hover:border-green-500 hover:text-green-500">200 OK</button>
+                        <button onclick="check(201)" class="btn-base hover:border-green-500 hover:text-green-500">201 Created</button>
+                        <button onclick="check(204)" class="btn-base hover:border-green-500 hover:text-green-500">204 No Content</button>
+                        
+                        <button onclick="check(400)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">400 Bad Req</button>
+                        <button onclick="check(401)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">401 Unauth</button>
+                        <button onclick="check(403)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">403 Forbidden</button>
+                        <button onclick="check(404)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">404 Not Found</button>
+                        
+                        <button onclick="check(500)" class="btn-base hover:border-red-500 hover:text-red-500">500 Error</button>
+                        <button onclick="check(503)" class="btn-base hover:border-red-500 hover:text-red-500">503 Unavail</button>
+                    </div>
+
+                    <!-- FEEDBACK -->
+                    <div id="triage-result" class="h-12 flex items-center text-xs font-mono border-t border-zinc-800 mt-2">
+                        <span class="text-zinc-600">// AWAITING DECISION...</span>
+                    </div>
+                    
+                    <button onclick="nextScenario()" id="next-btn" class="w-full mt-2 text-xs bg-zinc-800 text-zinc-500 py-2 border border-zinc-700 cursor-not-allowed" disabled>
+                        > LOAD NEXT TICKET
+                    </button>
                 </div>
 
+                <!-- RIGHT: PM CHEATSHEET -->
+                <div class="border-l border-zinc-800 pl-6 opacity-90 hover:opacity-100 transition-opacity">
+                    <span class="spec-label text-zinc-400 mb-4 border-b border-zinc-800 pb-1 block">>> PM_REFERENCE_GUIDE</span>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-green-500 text-xs font-bold">2xx: SUCCESS</span>
+                            <p class="spec-text">The system did exactly what it was asked to do.</p>
+                        </div>
+                        <div>
+                            <span class="text-yellow-500 text-xs font-bold">4xx: CLIENT ERROR (User Fault)</span>
+                            <p class="spec-text">The user sent bad data, or the Frontend code is broken. <br><strong>PM Action:</strong> File ticket for Frontend/UX.</p>
+                        </div>
+                        <div>
+                            <span class="text-red-500 text-xs font-bold">5xx: SERVER ERROR (System Fault)</span>
+                            <p class="spec-text">The backend logic crashed or the database is offline. <br><strong>PM Action:</strong> File ticket for Backend/DevOps.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <span class="spec-label text-indigo-400 mb-2 block">>> MODULE INSIGHT</span>
+                        <div class="insight-box rounded">
+                            <p class="text-[11px] text-indigo-100 leading-relaxed font-medium">
+                                <strong>Why this matters:</strong> If you assign a 500 error to a Frontend Dev, you waste 2 days. If you assign a 400 error to a Backend Dev, they will reject the ticket. Accurate triage accelerates sprint velocity.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-        </details>
-        <!-- == TEMPLATE MODULE END == -->
-
-    </div>
-
-    <!-- LOGIC KERNEL -->
-    <script>
-        function runTool() {
-            const input = document.getElementById('toolInput').value;
-            const output = document.getElementById('toolOutput');
             
-            // LOGIC GOES HERE
-            output.innerHTML = "<span class='text-green-500'>COMMAND EXECUTED</span>";
-        }
-    </script>
-</body>
+            <!-- MODULE LOGIC -->
+            <script>
+                const scenarios = [
+                    { text: "User submits a login form with the wrong password.", code: 401, reason: "401 means 'Authentication Failed'. The user is not who they claim to be." },
+                    { text: "User tries to delete a file, but the file ID does not exist.", code: 404, reason: "404 means the resource cannot be found at that address." },
+                    { text: "User clicks 'Save', but the database is offline for maintenance.", code: 503, reason: "503 means 'Service Unavailable'. The server is up, but cannot handle the request right now." },
+                    { text: "A logged-in Intern tries to access the CEO's Admin Dashboard.", code: 403, reason: "403 means 'Forbidden'. We know who you are (AuthN), but you don't have permission (AuthZ)." },
+                    { text: "Frontend sends a JSON payload missing a required comma.", code: 400, reason: "400 means 'Bad Request'. The server cannot parse the malformed input." },
+                    { text: "User uploads a profile picture successfully.", code: 200, reason: "200 OK. Standard success response." }
+                ];
+
+                let currentIdx = 0;
+
+                function loadScenario() {
+                    const s = scenarios[currentIdx];
+                    document.getElementById('scenario-text').innerText = s.text;
+                    document.getElementById('ticket-id').innerText = 101 + currentIdx;
+                    document.getElementById('triage-result').innerHTML = '<span class="text-zinc-600">// AWAITING DECISION...</span>';
+                    document.getElementById('next-btn').disabled = true;
+                    document.getElementById('next-btn').classList.add('cursor-not-allowed', 'text-zinc-500');
+                    document.getElementById('next-btn').classList.remove('text-white', 'hover:bg-zinc-700');
+                }
+
+                function check(selectedCode) {
+                    const correct = scenarios[currentIdx].code;
+                    const result = document.getElementById('triage-result');
+                    const btn = document.getElementById('next-btn');
+
+                    if (selectedCode === correct) {
+                        result.innerHTML = `<span class="text-green-500 font-bold">>> CORRECT: ${scenarios[currentIdx].reason}</span>`;
+                        btn.disabled = false;
+                        btn.classList.remove('cursor-not-allowed', 'text-zinc-500');
+                        btn.classList.add('text-white', 'hover:bg-zinc-700');
+                    } else {
+                        result.innerHTML = `<span class="text-red-500 font-bold">>> INCORRECT. Expected: ${correct}. Try again.</span>`;
+                    }
+                }
+
+                function nextScenario() {
+                    currentIdx = (currentIdx + 1) % scenarios.length;
+                    loadScenario();
+                }
+
+                // Init
+                loadScenario();
+            </script>
+        </details>
 </html>
 </html>
