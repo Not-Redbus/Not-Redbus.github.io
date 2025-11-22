@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,6 +27,10 @@
         .spec-label { color: #52525b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 4px; display: block; }
         .spec-text { color: #a1a1aa; font-size: 11px; line-height: 1.5; }
         
+        /* Buttons */
+        .btn-base { font-size: 12px; background: #27272a; color: #a1a1aa; padding: 4px 12px; border: 1px solid #3f3f46; transition: all 0.2s; }
+        .btn-base:hover { background: #f59e0b; color: black; border-color: #f59e0b; }
+
         .http-btn { font-size: 10px; font-weight: bold; padding: 6px; border: 1px solid #333; transition: all 0.1s; }
         .http-btn:hover { transform: translateY(-1px); }
         .btn-get:hover { background: #0ea5e9; color: white; }
@@ -40,6 +44,7 @@
 </head>
 <body class="min-h-screen p-4 sm:p-12 max-w-6xl mx-auto">
 
+    <!-- HEADER -->
     <div class="mb-8 border-b border-zinc-800 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
             <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (GO BACK)</a>
@@ -51,8 +56,10 @@
         </div>
     </div>
 
+    <!-- DIRECTORY LIST -->
     <div class="space-y-2">
 
+        <!-- MODULE 01: HTTP LAB -->
         <details class="group border-b border-zinc-900 pb-2" open>
             <summary class="flex items-center py-2 select-none transition-colors">
                 <span class="icon mr-4 font-bold"></span>
@@ -61,7 +68,7 @@
             </summary>
             
             <div class="pl-0 sm:pl-6 pt-6 pb-8 border-l border-zinc-900 ml-2">
-                
+                <!-- MODE SWITCH -->
                 <div class="flex justify-end mb-6">
                     <div onclick="toggleMode()" id="mode-btn" class="mode-switch mode-legacy px-4 py-2 text-xs font-bold rounded shadow-lg flex items-center gap-2">
                         <span id="mode-icon">🔴</span>
@@ -70,24 +77,22 @@
                 </div>
 
                 <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- LEFT: TOOL -->
                     <div>
                         <div class="flex justify-between items-end mb-2">
                             <span class="spec-label text-orange-500">>> SERVER_DATABASE (STATE)</span>
                             <span id="db-status" class="text-[10px] text-red-500 font-bold">UNPROTECTED</span>
                         </div>
-                        
                         <div class="terminal-box min-h-[120px] mb-4 flex flex-col justify-center relative overflow-hidden">
                             <pre id="db-display" class="text-[10px] whitespace-pre-wrap transition-all duration-300"></pre>
                             <div id="watermark" class="absolute top-2 right-2 text-[40px] font-black text-white/5 pointer-events-none">LEGACY</div>
                         </div>
-
                         <div class="grid grid-cols-4 gap-2 mb-4">
                             <button onclick="execute('GET')" class="http-btn btn-get text-blue-400">GET</button>
                             <button onclick="execute('POST')" class="http-btn btn-post text-green-400">POST</button>
                             <button onclick="execute('PUT')" class="http-btn btn-put text-yellow-400">PUT</button>
                             <button onclick="execute('DELETE')" class="http-btn btn-delete text-red-400">DEL</button>
                         </div>
-
                         <div class="flex justify-between items-end mb-1">
                             <span class="spec-label">>> CLIENT_PAYLOAD</span>
                             <span id="status-code" class="status-badge">READY</span>
@@ -98,11 +103,9 @@
                         </div>
                     </div>
 
+                    <!-- RIGHT: DOCS -->
                     <div class="border-l border-zinc-800 pl-0 lg:pl-8 flex flex-col justify-between">
-                        
-                        <div id="specs-content">
-                            </div>
-
+                        <div id="specs-content"></div>
                         <div class="mt-8">
                             <span class="spec-label text-indigo-400 mb-2 block">>> PM_TAKEAWAY (LEARNING OBJECTIVE)</span>
                             <div class="insight-box rounded">
@@ -111,14 +114,72 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </details>
 
+        <!-- MODULE 02: STATUS CODE TRIAGE -->
         <details class="group border-b border-zinc-900 pb-2">
             <summary class="flex items-center py-2 select-none transition-colors">
                 <span class="icon mr-4 font-bold"></span>
-                <span class="text-sm sm:text-base">02_status_code_quiz.exe</span>
+                <span class="text-sm sm:text-base">02_status_code_triage.exe</span>
+                <span class="ml-auto bg-green-900 text-green-400 text-[10px] px-2 py-1 rounded hidden sm:inline-block">ACTIVE</span>
+            </summary>
+            
+            <div class="pl-10 pt-4 pb-8 grid lg:grid-cols-2 gap-12 border-l border-zinc-900 ml-2">
+                <!-- LEFT: CONSOLE -->
+                <div>
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="spec-label text-orange-500">>> INCIDENT_REPORT</span>
+                        <span class="text-[10px] text-zinc-500">TICKET #<span id="ticket-id">101</span></span>
+                    </div>
+                    <div class="bg-zinc-900 p-4 border border-zinc-800 mb-4 min-h-[100px] flex flex-col justify-center">
+                        <p id="scenario-text" class="text-sm text-white font-medium leading-relaxed">Initializing...</p>
+                    </div>
+                    <span class="spec-label mb-2 block">>> ASSIGN STATUS CODE</span>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <button onclick="check(200)" class="btn-base hover:border-green-500 hover:text-green-500">200 OK</button>
+                        <button onclick="check(201)" class="btn-base hover:border-green-500 hover:text-green-500">201 Created</button>
+                        <button onclick="check(204)" class="btn-base hover:border-green-500 hover:text-green-500">204 No Content</button>
+                        <button onclick="check(400)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">400 Bad Req</button>
+                        <button onclick="check(401)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">401 Unauth</button>
+                        <button onclick="check(403)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">403 Forbidden</button>
+                        <button onclick="check(404)" class="btn-base hover:border-yellow-500 hover:text-yellow-500">404 Not Found</button>
+                        <button onclick="check(500)" class="btn-base hover:border-red-500 hover:text-red-500">500 Error</button>
+                        <button onclick="check(503)" class="btn-base hover:border-red-500 hover:text-red-500">503 Unavail</button>
+                    </div>
+                    <div id="triage-result" class="h-12 flex items-center text-xs font-mono border-t border-zinc-800 mt-2">
+                        <span class="text-zinc-600">// AWAITING DECISION...</span>
+                    </div>
+                    <button onclick="nextScenario()" id="next-btn" class="w-full mt-2 text-xs bg-zinc-800 text-zinc-500 py-2 border border-zinc-700 cursor-not-allowed" disabled>
+                        > LOAD NEXT TICKET
+                    </button>
+                </div>
+
+                <!-- RIGHT: REFERENCE -->
+                <div class="border-l border-zinc-800 pl-6 opacity-90 hover:opacity-100 transition-opacity">
+                    <span class="spec-label text-zinc-400 mb-4 border-b border-zinc-800 pb-1 block">>> PM_REFERENCE_GUIDE</span>
+                    <div class="space-y-4">
+                        <div><span class="text-green-500 text-xs font-bold">2xx: SUCCESS</span><p class="spec-text">The system did exactly what it was asked to do.</p></div>
+                        <div><span class="text-yellow-500 text-xs font-bold">4xx: CLIENT ERROR (User Fault)</span><p class="spec-text">The user sent bad data, or the Frontend code is broken. <br><strong>PM Action:</strong> File ticket for Frontend/UX.</p></div>
+                        <div><span class="text-red-500 text-xs font-bold">5xx: SERVER ERROR (System Fault)</span><p class="spec-text">The backend logic crashed or the database is offline. <br><strong>PM Action:</strong> File ticket for Backend/DevOps.</p></div>
+                    </div>
+                    <div class="mt-8">
+                        <span class="spec-label text-indigo-400 mb-2 block">>> MODULE INSIGHT</span>
+                        <div class="insight-box rounded">
+                            <p class="text-[11px] text-indigo-100 leading-relaxed font-medium">
+                                <strong>Why this matters:</strong> If you assign a 500 error to a Frontend Dev, you waste 2 days. If you assign a 400 error to a Backend Dev, they will reject the ticket. Accurate triage accelerates sprint velocity.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- MODULE 03: PLACEHOLDER -->
+        <details class="group border-b border-zinc-900 pb-2">
+            <summary class="flex items-center py-2 select-none transition-colors">
+                <span class="icon mr-4 font-bold"></span>
+                <span class="text-sm sm:text-base">03_auth_header_gate.exe</span>
                 <span class="ml-auto text-zinc-600 text-[10px] uppercase hidden sm:inline-block">COMING SOON</span>
             </summary>
             <div class="pl-10 pt-4 pb-8 text-xs text-zinc-500">
@@ -128,13 +189,12 @@
 
     </div>
 
+    <!-- LOGIC KERNEL -->
     <script>
-        // CLOCK
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }, 1000);
+        // --- CLOCK ---
+        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
 
-        // DATA CONFIG
+        // --- MODULE 01 LOGIC ---
         let isProdMode = false; 
         let db = { id: "REC-001", content: "Critical Data", timestamp: "2025-01-01T00:00:00Z", status: "active" };
         
@@ -157,17 +217,28 @@
             }
         };
 
-        // INITIAL LOAD
+        // --- MODULE 02 LOGIC ---
+        const scenarios = [
+            { text: "User submits a login form with the wrong password.", code: 401, reason: "401 means 'Authentication Failed'. The user is not who they claim to be." },
+            { text: "User tries to delete a file, but the file ID does not exist.", code: 404, reason: "404 means the resource cannot be found at that address." },
+            { text: "User clicks 'Save', but the database is offline for maintenance.", code: 503, reason: "503 means 'Service Unavailable'. The server is up, but cannot handle the request right now." },
+            { text: "A logged-in Intern tries to access the CEO's Admin Dashboard.", code: 403, reason: "403 means 'Forbidden'. We know who you are (AuthN), but you don't have permission (AuthZ)." },
+            { text: "Frontend sends a JSON payload missing a required comma.", code: 400, reason: "400 means 'Bad Request'. The server cannot parse the malformed input." },
+            { text: "User uploads a profile picture successfully.", code: 200, reason: "200 OK. Standard success response." }
+        ];
+        let currentIdx = 0;
+
+        // --- INIT ---
         window.onload = function() {
             renderMode();
             renderDB();
             document.getElementById('client-input').value = `{\n  "content": "New Content"\n}`;
+            loadScenario();
         };
 
-        // FUNCTIONS
+        // --- MOD 01 FUNCTIONS ---
         function toggleMode() {
             isProdMode = !isProdMode;
-            // Reset DB for demo purposes
             db = { id: "REC-001", content: "Critical Data", timestamp: "2025-01-01T00:00:00Z", status: "active" };
             renderMode();
             renderDB();
@@ -182,7 +253,6 @@
             const dbStatus = document.getElementById('db-status');
             const specs = document.getElementById('specs-content');
             const insight = document.getElementById('insight-text');
-            
             const data = isProdMode ? content.prod : content.legacy;
 
             if (isProdMode) {
@@ -201,74 +271,41 @@
 
             dbStatus.innerText = data.status;
             insight.innerText = data.insight;
-
             specs.innerHTML = `
-                <div class="mb-6">
-                    <h3 class="text-sm font-bold text-white mb-2">${data.title}</h3>
-                    <p class="spec-text italic mb-4">${data.desc}</p>
-                </div>
-                <div class="mb-4">
-                    <span class="spec-label">01. PUT BEHAVIOR</span>
-                    <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 leading-relaxed">${data.put_rule}</div>
-                </div>
-                <div class="mb-4">
-                    <span class="spec-label">02. DELETE BEHAVIOR</span>
-                    <div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 leading-relaxed">${data.del_rule}</div>
-                </div>
+                <div class="mb-6"><h3 class="text-sm font-bold text-white mb-2">${data.title}</h3><p class="spec-text italic mb-4">${data.desc}</p></div>
+                <div class="mb-4"><span class="spec-label">01. PUT BEHAVIOR</span><div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 leading-relaxed">${data.put_rule}</div></div>
+                <div class="mb-4"><span class="spec-label">02. DELETE BEHAVIOR</span><div class="bg-zinc-900 p-2 rounded border border-zinc-800 text-[10px] text-zinc-300 leading-relaxed">${data.del_rule}</div></div>
             `;
         }
 
         function execute(method) {
             const overlay = document.getElementById('client-overlay');
             const status = document.getElementById('status-code');
-            
             overlay.classList.add('hidden');
             status.className = "status-badge";
 
             if (method === 'GET') {
-                if (!db) {
-                    status.innerText = "404 NOT FOUND"; status.style.color = "#ef4444";
-                    overlay.innerText = "// 404: Resource not found.";
-                } else {
-                    status.innerText = "200 OK"; status.style.color = "#22c55e";
-                    if (isProdMode && db._archived) {
-                        status.innerText = "404 NOT FOUND (SOFT DELETE)"; status.style.color = "#eab308";
-                        overlay.innerText = "// Resource is archived. Client sees 404. Admin sees data.";
-                    } else {
-                        overlay.innerText = JSON.stringify(db, null, 2);
-                    }
-                }
+                if (!db) { status.innerText = "404 NOT FOUND"; status.style.color = "#ef4444"; overlay.innerText = "// 404: Resource not found."; } 
+                else { status.innerText = "200 OK"; status.style.color = "#22c55e"; 
+                    if (isProdMode && db._archived) { status.innerText = "404 NOT FOUND (SOFT DELETE)"; status.style.color = "#eab308"; overlay.innerText = "// Archived."; } 
+                    else { overlay.innerText = JSON.stringify(db, null, 2); } }
                 overlay.classList.remove('hidden');
             } else if (method === 'POST') {
                 const payload = parse(); if (!payload) return;
-                if (db && isProdMode) {
-                     status.innerText = "409 CONFLICT"; status.style.color = "#eab308";
-                } else {
-                    db = { ...payload, id: "REC-99", timestamp: new Date().toISOString() };
-                    status.innerText = "201 CREATED"; status.style.color = "#22c55e";
-                }
+                if (db && isProdMode) { status.innerText = "409 CONFLICT"; status.style.color = "#eab308"; } 
+                else { db = { ...payload, id: "REC-99", timestamp: new Date().toISOString() }; status.innerText = "201 CREATED"; status.style.color = "#22c55e"; }
                 renderDB();
             } else if (method === 'PUT') {
                 const payload = parse(); if (!payload) return;
-                if (isProdMode) {
-                    if (!payload.id || !payload.timestamp) {
-                        status.innerText = "400 BAD REQUEST"; status.style.color = "#ef4444";
-                        document.getElementById('client-input').value = "// ERROR: Missing 'id' or 'timestamp'.\n// Schema validation prevented data corruption.";
-                        return; 
-                    }
+                if (isProdMode) { 
+                    if (!payload.id || !payload.timestamp) { status.innerText = "400 BAD REQUEST"; status.style.color = "#ef4444"; document.getElementById('client-input').value = "// ERROR: Missing critical fields."; return; }
                     db = payload; status.innerText = "200 OK"; status.style.color = "#22c55e";
-                } else {
-                    db = payload; status.innerText = "200 OK (CORRUPTED)"; status.style.color = "#ef4444";
-                }
+                } else { db = payload; status.innerText = "200 OK (CORRUPTED)"; status.style.color = "#ef4444"; }
                 renderDB();
             } else if (method === 'DELETE') {
                 if (!db) { status.innerText = "404 NOT FOUND"; return; }
-                if (isProdMode) {
-                    db._archived = true; db.status = "archived"; db.deleted_at = new Date().toISOString();
-                    status.innerText = "204 NO CONTENT (ARCHIVED)"; status.style.color = "#22c55e";
-                } else {
-                    db = null; status.innerText = "204 NO CONTENT (DESTROYED)"; status.style.color = "#ef4444";
-                }
+                if (isProdMode) { db._archived = true; db.status = "archived"; db.deleted_at = new Date().toISOString(); status.innerText = "204 NO CONTENT (ARCHIVED)"; status.style.color = "#22c55e"; }
+                else { db = null; status.innerText = "204 NO CONTENT (DESTROYED)"; status.style.color = "#ef4444"; }
                 renderDB();
             }
         }
@@ -280,14 +317,43 @@
                 if (db._archived) el.className = "text-[10px] text-zinc-500 whitespace-pre-wrap line-through opacity-50";
                 else if (db.id === undefined) el.className = "text-[10px] text-red-500 whitespace-pre-wrap font-bold"; 
                 else el.className = "text-[10px] text-green-500 whitespace-pre-wrap";
-            } else {
-                el.innerText = "// [NULL] DATA DESTROYED"; el.className = "text-[10px] text-red-600 font-bold whitespace-pre-wrap";
-            }
+            } else { el.innerText = "// [NULL] DATA DESTROYED"; el.className = "text-[10px] text-red-600 font-bold whitespace-pre-wrap"; }
         }
 
         function parse() {
             try { return JSON.parse(document.getElementById('client-input').value); }
             catch(e) { document.getElementById('status-code').innerText = "INVALID JSON"; return null; }
+        }
+
+        // --- MOD 02 FUNCTIONS ---
+        function loadScenario() {
+            const s = scenarios[currentIdx];
+            document.getElementById('scenario-text').innerText = s.text;
+            document.getElementById('ticket-id').innerText = 101 + currentIdx;
+            document.getElementById('triage-result').innerHTML = '<span class="text-zinc-600">// AWAITING DECISION...</span>';
+            const btn = document.getElementById('next-btn');
+            btn.disabled = true;
+            btn.classList.add('cursor-not-allowed', 'text-zinc-500');
+            btn.classList.remove('text-white', 'hover:bg-zinc-700');
+        }
+
+        function check(selectedCode) {
+            const correct = scenarios[currentIdx].code;
+            const result = document.getElementById('triage-result');
+            const btn = document.getElementById('next-btn');
+            if (selectedCode === correct) {
+                result.innerHTML = `<span class="text-green-500 font-bold">>> CORRECT: ${scenarios[currentIdx].reason}</span>`;
+                btn.disabled = false;
+                btn.classList.remove('cursor-not-allowed', 'text-zinc-500');
+                btn.classList.add('text-white', 'hover:bg-zinc-700');
+            } else {
+                result.innerHTML = `<span class="text-red-500 font-bold">>> INCORRECT. Expected: ${correct}.</span>`;
+            }
+        }
+
+        function nextScenario() {
+            currentIdx = (currentIdx + 1) % scenarios.length;
+            loadScenario();
         }
     </script>
 </body>
