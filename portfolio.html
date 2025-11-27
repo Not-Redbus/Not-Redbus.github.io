@@ -9,7 +9,7 @@
     
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true, theme: 'dark', fontFamily: 'Roboto Mono' });
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', fontFamily: 'Roboto Mono', themeVariables: { darkMode: true, background: '#09090b', primaryColor: '#3b82f6', secondaryColor: '#ef4444', tertiaryColor: '#10b981' } });
     </script>
 
     <style>
@@ -77,8 +77,8 @@
                         <span class="spec-label text-red-500">>> THE "OPEN LOOP" VULNERABILITY (PROBLEM)</span>
                         <p class="spec-text mb-4">
                             Standard locker systems function on "Reactive Validation"—drivers open doors, deposit items, and scan them afterwards. 
-                            In pharmaceutical logistics, this is catastrophic. Once a vaccine enters a "hot" locker, the spoilage has already occurred. 
-                            The API can log the error, but it cannot reverse the chemical damage.
+                            In pharmaceutical logistics, this is catastrophic. Once a vaccine enters a "hot" locker, chemically, the spoilage has already occurred. 
+                            The API can log the error, but it cannot reverse the damage.
                         </p>
 
                         <span class="spec-label text-emerald-500">>> THE "CHECK-THEN-UNLOCK" PROTOCOL (SOLUTION)</span>
@@ -132,7 +132,7 @@
                             </ul>
                         </div>
 
-                        <div class="terminal-box flex flex-col justify-center items-center relative bg-zinc-950 p-4">
+                        <div class="terminal-box flex flex-col justify-center items-center relative bg-zinc-950 p-4 min-h-[250px]">
                             <div class="absolute top-2 left-2 text-[10px] text-zinc-600">seq_diagram: hardware_handoff</div>
                             <div class="mermaid w-full flex justify-center text-[10px]">
                                 sequenceDiagram
@@ -159,33 +159,145 @@
                 </div>
 
                 <div class="mb-12">
-                    <span class="spec-label text-green-500 mb-2">>> CORE_LOGIC.SQL (SUPABASE EDGE FUNCTION)</span>
-                    <div class="terminal-box overflow-x-auto">
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="spec-label text-blue-400">>> 02_REQUIREMENTS_SPEC.MD</span>
+                        <span class="text-[10px] text-zinc-500">STATUS: READY_FOR_DEV</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-zinc-900/50 rounded mb-6 overflow-hidden">
+                        <div class="bg-zinc-900 p-3 border-b border-zinc-800 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-white">US-101: Atomic Solenoid Release</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-blue-900 text-blue-300 border border-blue-700">P1_HIGH</span>
+                            </div>
+                            <span class="text-[10px] text-zinc-500">BE-OPS</span>
+                        </div>
+                        <div class="p-4 grid lg:grid-cols-2 gap-6">
+                            <div>
+                                <span class="spec-label text-zinc-500">USER STORY</span>
+                                <p class="spec-text mb-4">
+                                    As a <strong>Driver</strong>, I want the locker to unlock automatically <em>only</em> after I scan a valid package, so that I can deposit items without manually checking the manifest.
+                                </p>
+                                <span class="spec-label text-zinc-500">ACCEPTANCE CRITERIA (GHERKIN)</span>
+                                <pre class="text-[10px] text-zinc-400 font-mono whitespace-pre-wrap bg-black/50 p-2 rounded border-l-2 border-blue-500">
+GIVEN Locker #101 is 'AVAILABLE'
+WHEN Driver scans Valid Package
+THEN API returns 200 OK
+AND Solenoid triggers UNLOCK (Latency < 200ms)</pre>
+                            </div>
+                            <div>
+                                <span class="spec-label text-purple-400">>> TECH_IMPLEMENTATION (SQL)</span>
+                                <div class="terminal-box h-full">
 <pre class="code-text">
-<span class="sql-comment">-- The "Safety Gate" Logic: Stops human error at the API level</span>
-<span class="sql-keyword">create function</span> <span class="sql-func">validate_deposit</span>(locker_id uuid, shipment_id uuid) 
-<span class="sql-keyword">returns</span> void <span class="sql-keyword">as</span> $$
-<span class="sql-keyword">begin</span>
-  <span class="sql-comment">-- 1. Check Hardware Telemetry (The Logic Gate)</span>
-  <span class="sql-keyword">if</span> (lockers.current_temp > shipment.max_temp_limit) <span class="sql-keyword">then</span>
-    <span class="sql-comment">-- RETURN 422: The Solenoid will NEVER trigger</span>
-    <span class="sql-keyword">return error</span>(<span class="sql-string">'422: Temperature Excursion Risk - Deposit Blocked'</span>);
-  <span class="sql-keyword">end if</span>;
-
-  <span class="sql-comment">-- 2. Check Compliance Status (Kill Switch)</span>
-  <span class="sql-keyword">if</span> (lockers.validation_status != <span class="sql-string">'QUALIFIED'</span>) <span class="sql-keyword">then</span>
-    <span class="sql-keyword">return error</span>(<span class="sql-string">'503: Hardware not Validated for GxP Use'</span>);
-  <span class="sql-keyword">end if</span>;
-
-  <span class="sql-comment">-- 3. Execute Transaction & Write Audit Log</span>
-  <span class="sql-keyword">update</span> lockers <span class="sql-keyword">set</span> status = <span class="sql-string">'OCCUPIED'</span> <span class="sql-keyword">where</span> id = locker_id;
-<span class="sql-keyword">end</span>;
-$$;
+<span class="sql-keyword">UPDATE</span> lockers 
+<span class="sql-keyword">SET</span> status = <span class="sql-string">'OCCUPIED'</span>, 
+    is_door_open = <span class="sql-keyword">TRUE</span>
+<span class="sql-keyword">WHERE</span> id = $1 
+<span class="sql-keyword">AND</span> status = <span class="sql-string">'AVAILABLE'</span>
+<span class="sql-keyword">RETURNING</span> id; <span class="sql-comment">-- If no ID returned, hardware stays locked</span>
 </pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-zinc-900/50 rounded mb-6 overflow-hidden">
+                        <div class="bg-zinc-900 p-3 border-b border-zinc-800 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-white">US-102: Block Access on Deviation</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-red-900 text-red-300 border border-red-700">P0_CRITICAL</span>
+                            </div>
+                            <span class="text-[10px] text-zinc-500">SECURITY</span>
+                        </div>
+                        <div class="p-4 grid lg:grid-cols-2 gap-6">
+                            <div>
+                                <span class="spec-label text-zinc-500">USER STORY</span>
+                                <p class="spec-text mb-4">
+                                    As the <strong>System</strong>, I must enforce Min/Max temperature ranges before granting access, so that products are never exposed to Freezing or Heat degradation.
+                                </p>
+                                <span class="spec-label text-zinc-500">ACCEPTANCE CRITERIA (GHERKIN)</span>
+                                <pre class="text-[10px] text-zinc-400 font-mono whitespace-pre-wrap bg-black/50 p-2 rounded border-l-2 border-red-500">
+GIVEN Locker Temp is <span class="text-cyan-400">1.5°C</span> (Too Cold)
+AND Package Req: <span class="text-green-400">2.0°C - 8.0°C</span>
+WHEN Deposit Requested
+THEN API returns <span class="text-red-400">422 Unprocessable Entity</span>
+AND Solenoid remains <span class="text-red-400">LOCKED</span></pre>
+                            </div>
+                            <div>
+                                <span class="spec-label text-purple-400">>> TECH_IMPLEMENTATION (SQL EDGE FUNCTION)</span>
+                                <div class="terminal-box h-full">
+<pre class="code-text">
+<span class="sql-comment">-- Range Check Logic</span>
+<span class="sql-keyword">IF</span> (current_temp < shipment.min_temp) <span class="sql-keyword">OR</span> 
+   (current_temp > shipment.max_temp) <span class="sql-keyword">THEN</span>
+   
+   <span class="sql-keyword">INSERT INTO</span> audit_logs (event, risk)
+   <span class="sql-keyword">VALUES</span> (<span class="sql-string">'REJECTED_DEPOSIT'</span>, <span class="sql-string">'TEMP_DEVIATION'</span>);
+   
+   <span class="sql-keyword">RETURN ERROR</span>(<span class="sql-string">'422: UNSAFE ENVIRONMENT'</span>);
+<span class="sql-keyword">END IF</span>;
+</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-zinc-900/50 rounded overflow-hidden">
+                        <div class="bg-zinc-900 p-3 border-b border-zinc-800 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-white">US-103: Enforce GxP Validation State</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-indigo-900 text-indigo-300 border border-indigo-700">P0_COMPLIANCE</span>
+                            </div>
+                            <span class="text-[10px] text-zinc-500">LEGAL/QA</span>
+                        </div>
+                        <div class="p-4 grid lg:grid-cols-2 gap-6">
+                            <div>
+                                <span class="spec-label text-zinc-500">USER STORY</span>
+                                <p class="spec-text mb-4">
+                                    As a <strong>QA Officer</strong>, I want the API to reject use of "Unvalidated" hardware even if it is functioning correctly, to prevent FDA 21 CFR Part 11 violations.
+                                </p>
+                                <span class="spec-label text-zinc-500">ACCEPTANCE CRITERIA (GHERKIN)</span>
+                                <pre class="text-[10px] text-zinc-400 font-mono whitespace-pre-wrap bg-black/50 p-2 rounded border-l-2 border-indigo-500">
+GIVEN Locker is 'AVAILABLE' (Temp OK)
+BUT validation_status is <span class="text-yellow-400">'OUT_OF_SERVICE'</span>
+WHEN Deposit Requested
+THEN API returns <span class="text-red-400">503 Service Unavailable</span>
+AND Solenoid remains <span class="text-red-400">LOCKED</span></pre>
+                            </div>
+                            <div>
+                                <span class="spec-label text-purple-400">>> TECH_IMPLEMENTATION (SQL)</span>
+                                <div class="terminal-box h-full">
+<pre class="code-text">
+<span class="sql-keyword">SELECT</span> status <span class="sql-keyword">FROM</span> lockers 
+<span class="sql-keyword">WHERE</span> id = $1 
+<span class="sql-keyword">AND</span> validation_status = <span class="sql-string">'QUALIFIED'</span>;
+
+<span class="sql-comment">-- If this returns NULL, the API layer 
+-- throws 503 and halts execution.</span>
+</pre>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="grid lg:grid-cols-2 gap-8">
+                    <div>
+                        <span class="spec-label text-white mb-2">>> RESULTS (SIMULATED)</span>
+                        <div class="success-box rounded">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-white">COMPLIANCE RATE</span>
+                                <span class="text-emerald-400 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-emerald-900/30 h-1 mb-4"><div class="bg-emerald-500 h-1 w-full"></div></div>
+                            
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-white">DRIVER EFFICIENCY</span>
+                                <span class="text-emerald-400 font-bold">+40%</span>
+                            </div>
+                            <div class="w-full bg-emerald-900/30 h-1"><div class="bg-emerald-500 h-1 w-[40%]"></div></div>
+                        </div>
+                    </div>
                     <div>
                         <span class="spec-label text-white mb-2">>> FUTURE_ROADMAP</span>
                         <p class="spec-text mb-4">
