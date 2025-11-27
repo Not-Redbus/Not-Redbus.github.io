@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANDREW | BIOVAULT CASE STUDY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #000; color: #f59e0b; font-family: 'Roboto Mono', monospace; }
+        
+        /* Dropdown Logic */
+        details > summary { list-style: none; cursor: pointer; }
+        details > summary::-webkit-details-marker { display: none; }
+        details .icon:before { content: "[+]"; }
+        details[open] .icon:before { content: "[-]"; color: #ef4444; }
+        summary:hover { background-color: #1a1a1a; color: #fff; }
+
+        /* UI Components */
+        .terminal-box { background-color: #09090b; border: 1px solid #27272a; padding: 10px; border-radius: 4px; }
+        
+        /* Specialized Portfolio Components */
+        .insight-box { background-color: #1e1b4b; border-left: 3px solid #6366f1; padding: 12px; }
+        .success-box { background-color: #064e3b; border-left: 3px solid #10b981; padding: 12px; }
+        
+        .spec-label { color: #52525b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 4px; display: block; }
+        .spec-text { color: #a1a1aa; font-size: 11px; line-height: 1.6; }
+        .code-text { color: #a5b4fc; font-size: 11px; font-family: 'Courier New', Courier, monospace; }
+        
+        /* Syntax Highlighting Mockup */
+        .sql-keyword { color: #c084fc; } /* Purple */
+        .sql-func { color: #60a5fa; } /* Blue */
+        .sql-string { color: #4ade80; } /* Green */
+        .sql-comment { color: #52525b; font-style: italic; } /* Zinc */
+
+        /* Buttons */
+        .btn-base { font-size: 12px; background: #27272a; color: #a1a1aa; padding: 4px 12px; border: 1px solid #3f3f46; transition: all 0.2s; }
+        .btn-base:hover { background: #f59e0b; color: black; border-color: #f59e0b; }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-12 max-w-6xl mx-auto">
+
+    <div class="mb-8 border-b border-zinc-800 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div>
+            <a href="index.html" class="text-zinc-600 hover:text-white text-xs mb-2 block">&lt; .. (CD_ROOT)</a>
+            <h1 class="text-lg sm:text-xl text-indigo-400">C:\USERS\ANDREW\PORTFOLIO\</h1>
+        </div>
+        <div class="text-[10px] text-zinc-600 uppercase text-right">
+            <span class="block">SYS_TIME: <span id="clock">--:--:--</span></span>
+            <span class="block">PROJECT: BIOVAULT_CORE</span>
+        </div>
+    </div>
+
+    <div class="space-y-2">
+
+        <details class="group border border-zinc-800 rounded bg-black" open>
+            <summary class="flex items-center p-3 select-none transition-colors bg-zinc-900/50 hover:bg-zinc-900">
+                <span class="icon mr-4 font-bold text-zinc-500"></span>
+                <span class="text-sm font-bold text-white">01_biovault_cold_chain.sys</span>
+                <div class="ml-auto flex gap-2">
+                    <span class="bg-indigo-900 text-indigo-300 text-[10px] px-2 py-1 rounded border border-indigo-700">#GXP_COMPLIANT</span>
+                    <span class="bg-emerald-900 text-emerald-300 text-[10px] px-2 py-1 rounded border border-emerald-700">#IOT_SUPABASE</span>
+                </div>
+            </summary>
+            
+            <div class="p-6 border-t border-zinc-800">
+                
+                <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                    <div class="lg:col-span-2">
+                        <h2 class="text-2xl text-white font-bold mb-2">BioVault: Autonomous Logistics Engine</h2>
+                        <p class="text-zinc-400 text-sm mb-4">Role: Technical Product Manager / Architect</p>
+                        
+                        <span class="spec-label text-indigo-500">>> EXECUTIVE SUMMARY</span>
+                        <p class="spec-text mb-4">
+                            Last-mile delivery drivers often place temperature-sensitive pharmaceuticals into generic lockers, leading to undetected spoilage. 
+                            BioVault is a GxP-compliant API system that moves validation logic from the human driver to the database layer, mathematically preventing unsafe deposits.
+                        </p>
+                    </div>
+                    <div class="border-l border-zinc-800 pl-6 flex flex-col justify-center">
+                        <div class="insight-box rounded mb-2">
+                            <span class="spec-label text-indigo-300">>> HYPOTHESIS</span>
+                            <p class="text-[10px] text-indigo-100 italic">
+                                "If we enforce strict schema constraints at the DB level, we can reduce temperature excursions by 100% regardless of driver training."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-12">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="spec-label text-orange-500">>> ARCHITECTURE_DECISION_RECORD (ADR-001)</span>
+                        <span class="text-[10px] text-zinc-500">STATUS: APPROVED</span>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <div class="terminal-box">
+                            <span class="block text-zinc-500 text-[10px] mb-2">// DECISION: RELATIONAL (SQL) vs NOSQL</span>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li class="text-[11px] text-zinc-300">
+                                    <strong class="text-white">Constraint Enforcement:</strong> Selected PostgreSQL to use <span class="text-orange-400">CHECK</span> constraints. Unlike NoSQL, this rejects bad data before it hits the disk.
+                                </li>
+                                <li class="text-[11px] text-zinc-300">
+                                    <strong class="text-white">Auditability:</strong> 21 CFR Part 11 requires immutable logs. Relational integrity prevents "orphaned" packages.
+                                </li>
+                                <li class="text-[11px] text-zinc-300">
+                                    <strong class="text-white">Concurrency:</strong> Utilized Row-Level Locking to prevent race conditions when two drivers scan packages simultaneously.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="terminal-box flex flex-col justify-center items-center relative bg-zinc-950">
+                            <div class="absolute top-2 left-2 text-[10px] text-zinc-600">file: schema_erd.mermaid</div>
+                            <pre class="text-[10px] text-blue-300 leading-tight">
+LOCKERS ||--o{ SHIPMENTS
+[PK] id        [FK] locker_id
+status         min_temp
+temp_c         max_temp
+                            </pre>
+                            <div class="mt-2 text-[10px] text-zinc-500 text-center">
+                                * Relationship enforces 1:N<br>
+                                * Validation Logic sits between entities
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-12">
+                    <span class="spec-label text-green-500 mb-2">>> CORE_LOGIC.SQL (SUPABASE EDGE FUNCTION)</span>
+                    <div class="terminal-box overflow-x-auto">
+<pre class="code-text">
+<span class="sql-comment">-- The "Safety Gate" Logic: Stops human error at the API level</span>
+<span class="sql-keyword">create function</span> <span class="sql-func">validate_deposit</span>(locker_id uuid, shipment_id uuid) 
+<span class="sql-keyword">returns</span> void <span class="sql-keyword">as</span> $$
+<span class="sql-keyword">begin</span>
+  <span class="sql-comment">-- 1. Check Hardware Telemetry</span>
+  <span class="sql-keyword">if</span> (lockers.current_temp > shipment.max_temp_limit) <span class="sql-keyword">then</span>
+    <span class="sql-keyword">return error</span>(<span class="sql-string">'422: Temperature Excursion Risk - Deposit Blocked'</span>);
+  <span class="sql-keyword">end if</span>;
+
+  <span class="sql-comment">-- 2. Check Compliance Status (Kill Switch)</span>
+  <span class="sql-keyword">if</span> (lockers.validation_status != <span class="sql-string">'QUALIFIED'</span>) <span class="sql-keyword">then</span>
+    <span class="sql-keyword">return error</span>(<span class="sql-string">'503: Hardware not Validated for GxP Use'</span>);
+  <span class="sql-keyword">end if</span>;
+
+  <span class="sql-comment">-- 3. Execute Transaction & Write Audit Log</span>
+  <span class="sql-keyword">update</span> lockers <span class="sql-keyword">set</span> status = <span class="sql-string">'OCCUPIED'</span> <span class="sql-keyword">where</span> id = locker_id;
+<span class="sql-keyword">end</span>;
+$$;
+</pre>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div>
+                        <span class="spec-label text-white mb-2">>> RESULTS (SIMULATED)</span>
+                        <div class="success-box rounded">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-white">COMPLIANCE RATE</span>
+                                <span class="text-emerald-400 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-emerald-900/30 h-1 mb-4"><div class="bg-emerald-500 h-1 w-full"></div></div>
+                            
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-white">DRIVER EFFICIENCY</span>
+                                <span class="text-emerald-400 font-bold">+40%</span>
+                            </div>
+                            <div class="w-full bg-emerald-900/30 h-1"><div class="bg-emerald-500 h-1 w-[40%]"></div></div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="spec-label text-white mb-2">>> RETROSPECTIVE</span>
+                        <p class="spec-text mb-4">
+                            While the MVP enforces safety, it relies on client polling for temperature updates. 
+                            In V2, I would implement <strong>MQTT Webhooks</strong> to push temperature alerts in real-time, reducing database read load by 80%.
+                        </p>
+                        <div class="flex gap-2">
+                            <button class="btn-base">VIEW SWAGGER DOCS</button>
+                            <button class="btn-base">GITHUB REPO</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </details>
+
+        <details class="group border border-zinc-800 rounded bg-black opacity-50">
+            <summary class="flex items-center p-3 select-none cursor-not-allowed">
+                <span class="icon mr-4 font-bold text-zinc-600"></span>
+                <span class="text-sm font-bold text-zinc-500">02_agentic_ai_workflow.exe</span>
+                <span class="ml-auto text-zinc-700 text-[10px] uppercase">PENDING_DEV</span>
+            </summary>
+        </details>
+
+    </div>
+
+    <script>
+        // Clock Script
+        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
+    </script>
+</body>
+</html>
